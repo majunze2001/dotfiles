@@ -12,23 +12,23 @@ fi
 # Zsh and oh-my-zsh configs
 #-------------------------------------------------------------------
 # A kind reminder for others using my dotfiles
-JW_USERS=(jaywonchung jwnchung JWC cc)
-if [[ ! "${JW_USERS[*]}" =~ "$USER" ]]; then
-  # Username is not Jae-Won's
-  if [[ "$(git config --global --get user.name)" = "Jae-Won Chung" ]]; then
-    # But git username is Jae-Won
+SRC_USERS=(jeff jeffjma)
+if [[ ! "${SRC_USERS[*]}" =~ "$USER" ]]; then
+  # Username is not Jeff's
+  if [[ "$(git config --global --get user.name)" = "Jeff Ma" ]]; then
+    # But git username is Jeff
     echo Hey, $USER. Remember to run git config with your idendity!
     echo   git config --global user.name \[YOUR NAME HERE\]
     echo   git config --global user.email \[YOUR GITHUB EMAIL HERE\]
   fi
 fi
-unset JW_USERS
+unset SRC_USERS
 
 # Path to oh-my-zsh installation
 export ZSH="$HOME/.oh-my-zsh"
 
 # Name of theme to load
-ZSH_THEME=powerlevel10k/powerlevel10k
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Hyphen-insensitive completion
 HYPHEN_INSENSITIVE="true"
@@ -37,7 +37,7 @@ HYPHEN_INSENSITIVE="true"
 DISABLE_UPDATE_PROMPT="true"
 
 # Oh-my-zsh plugins
-plugins=(git fast-syntax-highlighting zsh-autosuggestions docker)
+plugins=(git fast-syntax-highlighting zsh-autosuggestions docker colored-man-pages)
 
 # Disable completion script permission check
 ZSH_DISABLE_COMPFIX="true"
@@ -68,6 +68,11 @@ setopt HIST_VERIFY               # Do not execute immediately upon history expan
 setopt APPEND_HISTORY            # append to history file
 setopt HIST_NO_STORE             # Don't store history commands
 
+# bind ctrl + J to accept the current zsh suggestion
+bindkey '^J' autosuggest-accept
+# bind ctrl + O to execute the current zsh suggestion
+bindkey '^O' autosuggest-execute
+
 # Zsh autosuggestion color
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
@@ -91,13 +96,6 @@ PROMPT_EOL_MARK='⏎'
 #-------------------------------------------------------------------
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# Powerlevel9k options override p10k
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
-POWERLEVEL9K_SHORTEN_STRATEGY="Default"
-POWERLEVEL9K_SHORTEN_DELIMITER=".."
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon host dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status anaconda time)
-
 #-------------------------------------------------------------------
 # Command-line tools
 #-------------------------------------------------------------------
@@ -108,19 +106,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Some shell scripts
 export PATH="$HOME/.dotmodules/bin:$PATH"
-
-# Launch and detach from terminal
-function launch {
-    nohup "$@" >/dev/null 2>/dev/null &
-    disown
-}
-
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# autojump
-[[ -s "$HOME/.autojump/etc/profile.d/autojump.sh" ]] &&
-    source "$HOME/.autojump/etc/profile.d/autojump.sh"
 
 # Homebrew for MacOS
 if [[ "$_UNAME" == "Darwin" ]]; then
@@ -189,13 +174,6 @@ alias gcm='git commit -m'
 
 # dotfile management
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-alias dst='dotfiles status'
-alias da='dotfiles add'
-alias dcm='dotfiles commit -m'
-alias dco='dotfiles checkout'
-alias dp='dotfiles push'
-alias dl='dotfiles pull'
-alias ddf='dotfiles difftool'
 
 # nvim
 alias nconf="nvim $HOME/.config/nvim/init.lua"
@@ -238,10 +216,6 @@ export MANWIDTH=999
 #-------------------------------------------------------------------
 # MacOS
 if [[ "$_UNAME" == "Darwin" ]]; then
-  # Synctex + Neovim
-  # Requires dbus. See vimtex docs section vimtex-faq-zathura-macos.
-  export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket
-  export DBUS_SESSION_BUS_ADDRESS="unix:path=$DBUS_LAUNCHD_SESSION_BUS_SOCKET"
 
   # Kitty
   export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
@@ -258,9 +232,16 @@ if [[ "$_UNAME" == "Darwin" ]]; then
   # Sioyek
   export PATH="/Applications/sioyek.app/Contents/MacOS:$PATH"
 
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
 # Linux
 elif [[ "$_UNAME" == "Linux" ]]; then
   # Actually not much for now.
 fi
 
 unset _UNAME
+
+# Load env
+[[ ! -f ~/.env.sh ]] || source ~/.env.sh
