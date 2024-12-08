@@ -1,10 +1,11 @@
+#!/usr/bin/env bash
+
 if [ -n "$SSH" ]; then
-  git clone --bare git@github.com:jaywonchung/dotfiles $HOME/.dotfiles
+  git clone --bare git@github.com:majunze2001/dotfiles $HOME/.dotfiles
 else
-  git clone --bare https://github.com/jaywonchung/dotfiles.git $HOME/.dotfiles
+  git clone --bare https://github.com/majunze2001/dotfiles.git $HOME/.dotfiles
 fi
 git --git-dir=$HOME/.dotfiles --work-tree=$HOME checkout master
-source .dotmodules/init.sh
 
-dotfiles checkout ubuntu-server
-zsh $HOME/.dotmodules/install/all.sh
+dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME' checkout unified
+bash $HOME/.dotmodules/install/all.sh
