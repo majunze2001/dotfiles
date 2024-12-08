@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 if [ -n "$SSH" ]; then
   git clone --bare git@github.com:majunze2001/dotfiles $HOME/.dotfiles
@@ -7,4 +7,4 @@ else
 fi
 
 git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME checkout unified
-bash $HOME/.dotmodules/install/all.sh
+zsh $HOME/.dotmodules/install/all.sh
