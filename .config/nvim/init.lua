@@ -37,6 +37,7 @@ vim.opt.cursorline = true           -- Highlight the row where the cursor is on
 vim.opt.signcolumn = "yes"          -- Space for LSP diagnostics and gitsigns
 vim.opt.mouse = { a = true }        -- Mouse is useful for visual selection
 vim.opt.history = 256               -- History for commands, searches, etc
+vim.opt.clipboard = "unnamedplus"
 
 -- Syntax highlighting
 vim.cmd('syntax on')
@@ -54,27 +55,33 @@ end
 ------------------------------------------------------------------------------
 -- Leader keys
 vim.g.maplocalleader = ','
-vim.g.mapleader = " "
+vim.g.mapleader = ","
 
 -- Cursor movement
 vim.keymap.set({ 'n', 'v' }, 'H', '^')
 vim.keymap.set({ 'n', 'v' }, 'L', '$')
-vim.keymap.set('n', ';', ':')
+-- vim.keymap.set('n', ';', ':')
 
 -- Suspend vim
 vim.keymap.set('n', '<C-z>', ':suspend<CR>')
 
 -- Unhighlight all search highlights
-vim.keymap.set('n', '<C-c>', ':noh<CR>', { silent = true })
+-- vim.keymap.set('n', '<C-c>', ':noh<CR>', { silent = true })
+vim.keymap.set('i', '<C-c>', '<C-[>', { silent = true })
 
 -- Toggle relative line numbers
 vim.keymap.set('n', '<Leader>r', function()
   vim.opt.relativenumber = not vim.opt.relativenumber:get()
 end, { silent = true })
 
+-- Toggle line numbers
+vim.keymap.set('n', '<Leader>n', function()
+  vim.opt.number = not vim.opt.number:get()
+end, { silent = true })
+
 -- Windows and files
 vim.keymap.set('n', '<Leader>w', ':w<CR>')
-vim.keymap.set('n', '<Leader>qq', ':q<CR>')
+vim.keymap.set('n', '<Leader>qq', ':q!<CR>')
 vim.keymap.set('n', '<Leader>qa', ':qa<CR>')
 vim.keymap.set('n', '<Leader>s', ':sp<CR>')
 vim.keymap.set('n', '<Leader>v', ':vsp<CR>')
@@ -233,11 +240,8 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- Cursor shape
 vim.api.nvim_create_autocmd({ "VimEnter", "VimResume" }, {
   pattern = "*",
-  command = "set guicursor=n-v:block-Cursor/lCursor-blinkon0,i-c-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor"
-})
-vim.api.nvim_create_autocmd({ "VimLeave", "VimSuspend" }, {
-  pattern = "*",
-  command = "set guicursor=a:ver25"
+  -- Normal and visual mode cursors; Insert, command-line, and insert completion mode cursors; Replace and completion-replace mode cursors
+  command = "set guicursor=n-v:block-Cursor/lCursor-blinkon100,i-c-ci:ver35-Cursor/lCursor-blinkon100,r-cr:hor20-Cursor/lCursor-blinkon100"
 })
 
 -- Set line wrap for both splits when in diff mode
@@ -249,7 +253,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end
   end
 })
-
 
 ------------------------------------------------------------------------------
 -- Language settings
@@ -270,6 +273,116 @@ vim.g.tex_flavor = "latex"
 --- Lua filetypes
 vim.g.do_filetype_lua = 1
 vim.g.did_load_filetypes = 0
+
+------------------------------------------------------------------------------
+-- My Term settings
+-- These are to make the terminal inegration behaves like vim
+------------------------------------------------------------------------------
+
+-- Start in insert mode when opening a terminal
+vim.api.nvim_create_autocmd('TermOpen', {
+  pattern = '*',
+  callback = function()
+    -- Start in insert mode
+    vim.cmd('startinsert')
+    
+    -- Disable absolute line numbering
+    vim.wo.number = false
+    
+    -- Disable relative line numbering
+    vim.wo.relativenumber = false
+  end,
+})
+
+-- Function to re-enter insert mode if needed
+local function TermEnter()
+  if vim.b.term_insert == 1 then
+    vim.cmd('startinsert')
+    vim.b.term_insert = 0
+  end
+end
+
+-- Autocmds to handle re-entering insert mode
+vim.api.nvim_create_autocmd({ 'CmdlineLeave', 'WinEnter', 'BufWinEnter' }, {
+  pattern = '*',
+  callback = function()
+    vim.defer_fn(TermEnter, 0)
+  end,
+})
+
+-- Stop insert mode on terminal close
+vim.api.nvim_create_autocmd('TermClose', {
+  pattern = '*',
+  nested = true,
+  command = 'stopinsert',
+})
+
+-- Auto close terminal buffer when terminal exits
+vim.api.nvim_create_autocmd('TermClose', {
+  pattern = '*',
+  callback = function()
+    if vim.bo.buftype == 'terminal' then
+      vim.api.nvim_buf_delete(0, { force = true })
+    end
+  end,
+})
+
+-- Function to execute command and set term_insert flag
+function _G.TermExec(cmd)
+  vim.b.term_insert = 1
+  vim.cmd(cmd)
+end
+
+-- Terminal mode mappings for window navigation
+vim.keymap.set('t', '<C-W>.', '<C-W>', { silent = true })
+vim.keymap.set('t', '<C-W><C-.>', '<C-W>', { silent = true })
+vim.keymap.set('t', '<C-W><C-\\>', '<C-\\>', { silent = true })
+vim.keymap.set('t', '<C-W>N', '<C-\\><C-N>', { silent = true })
+vim.keymap.set('t', '<C-W>:', '<C-\\><C-N>:', { silent = true })
+vim.keymap.set('t', '<C-W><C-W>', [[<cmd>lua TermExec('wincmd w')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W>h', [[<cmd>lua TermExec('wincmd h')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W>j', [[<cmd>lua TermExec('wincmd j')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W>k', [[<cmd>lua TermExec('wincmd k')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W>l', [[<cmd>lua TermExec('wincmd l')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W><C-H>', [[<cmd>lua TermExec('wincmd h')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W><C-J>', [[<cmd>lua TermExec('wincmd j')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W><C-K>', [[<cmd>lua TermExec('wincmd k')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W><C-L>', [[<cmd>lua TermExec('wincmd l')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W>gt', [[<cmd>lua TermExec('tabn')<CR>]], { silent = true })
+vim.keymap.set('t', '<C-W>gT', [[<cmd>lua TermExec('tabp')<CR>]], { silent = true })
+
+-- Define custom commands starting with uppercase letters
+vim.api.nvim_create_user_command('Ter', function(opts)
+  vim.cmd('split | terminal ' .. opts.args)
+end, { nargs = '*', complete = 'shellcmd' })
+
+vim.api.nvim_create_user_command('Te', function(opts)
+  vim.cmd('split | terminal ' .. opts.args)
+end, { nargs = '*', complete = 'shellcmd' })
+
+vim.api.nvim_create_user_command('Terminal', function(opts)
+  vim.cmd('split | terminal ' .. opts.args)
+end, { nargs = '*', complete = 'shellcmd' })
+
+vim.api.nvim_create_user_command('Vt', function(opts)
+  vim.cmd('vsplit | terminal ' .. opts.args)
+end, { nargs = '*', complete = 'shellcmd' })
+
+-- Create command-line abbreviations to map lowercase commands to uppercase
+vim.cmd('cnoreabbrev <expr> ter       ((getcmdtype() == ":" && getcmdline() == "ter")       ? "Ter"       : "ter")')
+vim.cmd('cnoreabbrev <expr> te        ((getcmdtype() == ":" && getcmdline() == "te")        ? "Te"        : "te")')
+vim.cmd('cnoreabbrev <expr> terminal  ((getcmdtype() == ":" && getcmdline() == "terminal")  ? "Terminal"  : "terminal")')
+vim.cmd('cnoreabbrev <expr> Vt        ((getcmdtype() == ":" && getcmdline() == "Vt")        ? "Vt"        : "Vt")')
+vim.cmd('cnoreabbrev <expr> vt        ((getcmdtype() == ":" && getcmdline() == "vt")        ? "Vt"        : "vt")')
+
+-- Key mappings in normal and terminal modes to move the current window to the far edges
+for _, mode in ipairs({ 'n', 't' }) do
+  vim.keymap.set(mode, '<C-w>H', '<cmd>wincmd H<CR>', { silent = true })
+  vim.keymap.set(mode, '<C-w>L', '<cmd>wincmd L<CR>', { silent = true })
+  vim.keymap.set(mode, '<C-w>K', '<cmd>wincmd K<CR>', { silent = true })
+  vim.keymap.set(mode, '<C-w>J', '<cmd>wincmd J<CR>', { silent = true })
+end
+
 
 ------------------------------------------------------------------------------
 -- Plugins
@@ -313,115 +426,115 @@ require("lazy").setup({
         vim.keymap.set('v', '<leader>y', require('osc52').copy_visual)
       end,
     },
-    {
-      "voldikss/vim-floaterm",
-      init = function()
-        -- Size
-        vim.g.floaterm_height = 0.7
-        vim.g.floaterm_width = 0.7
+    -- {
+    --   "voldikss/vim-floaterm",
+    --   init = function()
+    --     -- Size
+    --     vim.g.floaterm_height = 0.7
+    --     vim.g.floaterm_width = 0.7
 
-        -- Close window when process exits
-        vim.g.floaterm_autoclose = 2
+    --     -- Close window when process exits
+    --     vim.g.floaterm_autoclose = 2
 
-        -- Open and hide.
-        vim.keymap.set('n', '<CR>', ':FloatermToggle<CR>', { silent = true })
-        vim.keymap.set('t', '<C-z>', '<C-\\><C-n>:FloatermHide<CR>', { silent = true })
+    --     -- Open and hide.
+    --     vim.keymap.set('n', '<CR>', ':FloatermToggle<CR>', { silent = true })
+    --     vim.keymap.set('t', '<C-z>', '<C-\\><C-n>:FloatermHide<CR>', { silent = true })
 
-        -- Default shell
-        if vim.fn.executable('zsh') == 1 then
-          vim.g.floaterm_shell = 'zsh'
-        end
+    --     -- Default shell
+    --     if vim.fn.executable('zsh') == 1 then
+    --       vim.g.floaterm_shell = 'zsh'
+    --     end
 
-        -- Prettier borders
-        vim.g.floaterm_borderchars = '─│─│╭╮╯╰'
+    --     -- Prettier borders
+    --     vim.g.floaterm_borderchars = '─│─│╭╮╯╰'
 
-        -- Silently start a terminal in the background at startup
-        vim.api.nvim_create_autocmd("VimEnter", {
-          pattern = "*",
-          command = "FloatermNew --silent"
-        })
+    --     -- Silently start a terminal in the background at startup
+    --     vim.api.nvim_create_autocmd("VimEnter", {
+    --       pattern = "*",
+    --       command = "FloatermNew --silent"
+    --     })
 
-        -- `floaterm [FILE]` inside the floating terminal will open the file as:
-        vim.g.floaterm_opener = "tabe"
-      end,
-    },
-    {
-      "zbirenbaum/copilot.lua",
-      config = function()
-        require("copilot").setup({
-          suggestion = {
-            enabled = true,
-            auto_trigger = true,
-            keymap = {
-              accept = "<C-e>",  -- Doesn't conflict with cmp because select = false.
-              accept_line = "<M-e>",
-            },
-          },
-          filetypes = {
-            python = true,
-            rust = true,
-            go = true,
-            cpp = true,
-            bash = true,
-            zig = true,
-            ["*"] = false,
-          },
-        })
-
-        vim.keymap.set('n', '<Leader>cd', ':Copilot disable<CR>', { silent = true })
-      end,
-    },
-    {
-      "yetone/avante.nvim",
-      event = "VeryLazy",
-      lazy = false,
-      version = false, -- set this if you want to always pull the latest change
-      opts = {
-        -- add any opts here
-      },
-      -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-      build = "make",
-      -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-      dependencies = {
-        "nvim-treesitter/nvim-treesitter",
-        "stevearc/dressing.nvim",
-        "nvim-lua/plenary.nvim",
-        "MunifTanjim/nui.nvim",
-        --- The below dependencies are optional,
-        "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-        "zbirenbaum/copilot.lua", -- for providers='copilot'
-        {
-          -- support for image pasting
-          "HakonHarnes/img-clip.nvim",
-          event = "VeryLazy",
-          opts = {
-            -- recommended settings
-            default = {
-              embed_image_as_base64 = false,
-              prompt_for_file_name = false,
-              drag_and_drop = {
-                insert_mode = true,
-              },
-              -- required for Windows users
-              use_absolute_path = true,
-            },
-          },
-        },
-        {
-          -- Make sure to set this up properly if you have lazy=true
-          'MeanderingProgrammer/render-markdown.nvim',
-          opts = {
-            file_types = { "Avante" },
-          },
-          ft = { "Avante" },
-        },
-      },
-      config = function()
-        require('avante').setup({
-          provider = "copilot"
-        })
-      end
-    },
+    --     -- `floaterm [FILE]` inside the floating terminal will open the file as:
+    --     vim.g.floaterm_opener = "tabe"
+    --   end,
+    -- },
+    -- {
+    --   "zbirenbaum/copilot.lua",
+    --   config = function()
+    --     require("copilot").setup({
+    --       suggestion = {
+    --         enabled = true,
+    --         auto_trigger = true,
+    --         keymap = {
+    --           accept = "<C-e>",  -- Doesn't conflict with cmp because select = false.
+    --           accept_line = "<M-e>",
+    --         },
+    --       },
+    --       filetypes = {
+    --         python = true,
+    --         rust = true,
+    --         go = true,
+    --         cpp = true,
+    --         bash = true,
+    --         zig = true,
+    --         ["*"] = false,
+    --       },
+    --     })
+    --
+    --     vim.keymap.set('n', '<Leader>cd', ':Copilot disable<CR>', { silent = true })
+    --   end,
+    -- },
+    -- {
+    --   "yetone/avante.nvim",
+    --   event = "VeryLazy",
+    --   lazy = false,
+    --   version = false, -- set this if you want to always pull the latest change
+    --   opts = {
+    --     -- add any opts here
+    --   },
+    --   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    --   build = "make",
+    --   -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    --   dependencies = {
+    --     "nvim-treesitter/nvim-treesitter",
+    --     "stevearc/dressing.nvim",
+    --     "nvim-lua/plenary.nvim",
+    --     "MunifTanjim/nui.nvim",
+    --     --- The below dependencies are optional,
+    --     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+    --     "zbirenbaum/copilot.lua", -- for providers='copilot'
+    --     {
+    --       -- support for image pasting
+    --       "HakonHarnes/img-clip.nvim",
+    --       event = "VeryLazy",
+    --       opts = {
+    --         -- recommended settings
+    --         default = {
+    --           embed_image_as_base64 = false,
+    --           prompt_for_file_name = false,
+    --           drag_and_drop = {
+    --             insert_mode = true,
+    --           },
+    --           -- required for Windows users
+    --           use_absolute_path = true,
+    --         },
+    --       },
+    --     },
+    --     {
+    --       -- Make sure to set this up properly if you have lazy=true
+    --       'MeanderingProgrammer/render-markdown.nvim',
+    --       opts = {
+    --         file_types = { "Avante" },
+    --       },
+    --       ft = { "Avante" },
+    --     },
+    --   },
+    --   config = function()
+    --     require('avante').setup({
+    --       provider = "copilot"
+    --     })
+    --   end
+    -- },
     {
       "lukas-reineke/indent-blankline.nvim",
       main = "ibl",
@@ -438,7 +551,11 @@ require("lazy").setup({
       config = function()
         -- NOTE: Depends on g:lualine_theme being set when configuring the colorscheme.
         local function my_filename()
-          return vim.fn.expand('%:~:.')
+          local filename = vim.fn.expand('%:~:.')
+          if vim.bo.modified then
+            filename = filename .. ' [+]'
+          end
+          return filename
         end
 
         local function my_location()
@@ -604,33 +721,33 @@ require("lazy").setup({
         vim.keymap.set('n', '<C-f>', function()
           require("nvim-tree.api").tree.open({ focus = true, find_file = true })
         end, { silent = true })
-        vim.keymap.set('n', '<Leader>n', function()
+        vim.keymap.set('n', '<C-t>', function()
           require("nvim-tree.api").tree.toggle(true, true)
         end, { silent = true })
 
         -- Open-At-Startup configuration
-        local function open_nvim_tree(data)
-
-          -- Buffer is a real file on the disk -> open
-          local real_file = vim.fn.filereadable(data.file) == 1
-
-          -- Buffer is a [No Name] -> don't open
-          local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
-
-          -- Currently in diff mode (nvim -d) -> don't open
-          local diff_mode = vim.opt.diff:get()
-
-          -- Neovim is wide enough -> open
-          local wide_enough = vim.opt.columns:get() > 125
-
-          if not real_file or no_name or diff_mode or not wide_enough then
-            return
-          end
-
-          -- open the tree, find the file, but don't focus nvim-tree
-          require("nvim-tree.api").tree.toggle({ focus = false, find_file = true, })
-        end
-        vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
+        -- local function open_nvim_tree(data)
+        --
+        --   -- Buffer is a real file on the disk -> open
+        --   local real_file = vim.fn.filereadable(data.file) == 1
+        --
+        --   -- Buffer is a [No Name] -> don't open
+        --   local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
+        --
+        --   -- Currently in diff mode (nvim -d) -> don't open
+        --   local diff_mode = vim.opt.diff:get()
+        --
+        --   -- Neovim is wide enough -> open
+        --   local wide_enough = vim.opt.columns:get() > 125
+        --
+        --   if not real_file or no_name or diff_mode or not wide_enough then
+        --     return
+        --   end
+        --
+        --   -- open the tree, find the file, but don't focus nvim-tree
+        --   require("nvim-tree.api").tree.toggle({ focus = false, find_file = true, })
+        -- end
+        -- vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
         local function on_attach(bufnr)
           local api = require('nvim-tree.api')
@@ -644,6 +761,7 @@ require("lazy").setup({
           vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              opts('Info'))
           vim.keymap.set('n', '<C-r>', api.fs.rename_sub,                     opts('Rename: Omit Filename'))
           vim.keymap.set('n', '<C-v>', api.node.open.vertical,                opts('Open: Vertical Split'))
+          vim.keymap.set('n', 's', api.node.open.vertical,                opts('Open: Vertical Split'))
           vim.keymap.set('n', '<BS>',  api.node.navigate.parent_close,        opts('Close Directory'))
           vim.keymap.set('n', '<CR>',  api.node.open.edit,                    opts('Open'))
           vim.keymap.set('n', '<Tab>', api.node.open.preview,                 opts('Open Preview'))
@@ -690,6 +808,7 @@ require("lazy").setup({
 
           -- Mappings migrated from view.mappings.list
           vim.keymap.set('n', '<C-s>', api.node.open.horizontal, opts('Open: Horizontal Split'))
+          vim.keymap.set('n', 'i', api.node.open.horizontal, opts('Open: Horizontal Split'))
           vim.keymap.set('n', '<C-g>', api.node.open.tab, opts('Open: New Tab'))
           vim.keymap.set('n', '<F2>', api.fs.rename, opts('Rename'))
         end
@@ -713,27 +832,41 @@ require("lazy").setup({
           },
         })
 
+        -- Close all nvim-tree windows when it's closed.
+        -- Also, while ignoring fidget.nvim windows, if the last code window was closed, quit Neovim.
         local function tab_win_closed(winnr)
           local api = require"nvim-tree.api"
           local tabnr = vim.api.nvim_win_get_tabpage(winnr)
           local bufnr = vim.api.nvim_win_get_buf(winnr)
           local buf_info = vim.fn.getbufinfo(bufnr)[1]
-          local tab_wins = vim.tbl_filter(function(w) return w~=winnr end, vim.api.nvim_tabpage_list_wins(tabnr))
-          local tab_bufs = vim.tbl_map(vim.api.nvim_win_get_buf, tab_wins)
-          if buf_info.name:match(".*NvimTree_%d*$") then            -- close buffer was nvim tree
-            -- Close all nvim tree on :q
-            if not vim.tbl_isempty(tab_bufs) then                      -- and was not the last window (not closed automatically by code below)
+          local all_tab_wins = vim.api.nvim_tabpage_list_wins(tabnr)
+          local remaining_wins = vim.tbl_filter(function(w) return w ~= winnr end, all_tab_wins)
+          local remaining_bufs = vim.tbl_map(vim.api.nvim_win_get_buf, remaining_wins)
+
+          local significant_remaining_bufs = vim.tbl_filter(function(b)
+            local info = vim.fn.getbufinfo(b)[1]
+            return vim.bo[info.bufnr].filetype ~= "fidget"
+          end, remaining_bufs)
+
+          if buf_info.name:match(".*NvimTree_%d*$") then
+            if not vim.tbl_isempty(significant_remaining_bufs) then
               api.tree.close()
             end
-          else                                                      -- else closed buffer was normal buffer
-            if #tab_bufs == 1 then                                    -- if there is only 1 buffer left in the tab
-              local last_buf_info = vim.fn.getbufinfo(tab_bufs[1])[1]
-              if last_buf_info.name:match(".*NvimTree_%d*$") then       -- and that buffer is nvim tree
+          else
+            if #significant_remaining_bufs == 1 then
+              local last_buf_info = vim.fn.getbufinfo(significant_remaining_bufs[1])[1]
+              if last_buf_info.name:match(".*NvimTree_%d*$") then
                 vim.schedule(function ()
-                  if #vim.api.nvim_list_wins() == 1 then                -- if its the last buffer in vim
-                    vim.cmd "quit"                                        -- then close all of vim
-                  else                                                  -- else there are more tabs open
-                    vim.api.nvim_win_close(tab_wins[1], true)             -- then close only the tab
+                  local all_wins = vim.api.nvim_list_wins()
+                  local non_fidget_wins = vim.tbl_filter(function(win)
+                    local buf = vim.api.nvim_win_get_buf(win)
+                    return vim.bo[buf].filetype ~= "fidget"
+                  end, all_wins)
+
+                  if #non_fidget_wins == 1 then  -- Only one significant window left
+                    vim.cmd "quit"  -- Quit Neovim entirely
+                  elseif #non_fidget_wins > 1 then
+                    vim.api.nvim_win_close(remaining_wins[1], true)  -- Close the NvimTree window safely
                   end
                 end)
               end
@@ -850,7 +983,7 @@ require("lazy").setup({
     {
       "airblade/vim-rooter",
       init = function()
-        vim.g.rooter_patterns = { '.git', 'Cargo.toml', '.obsidian', 'pyproject.toml' }
+        vim.g.rooter_patterns = { '.git', 'Cargo.toml' }
       end
     },
     { "christoomey/vim-tmux-navigator" },
@@ -880,27 +1013,27 @@ require("lazy").setup({
         },
       },
     },
-    {
-      "epwalsh/obsidian.nvim",
-      version = "*",
-      lazy = true,
-      ft = "markdown",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        "hrsh7th/nvim-cmp",
-        "nvim-telescope/telescope.nvim",
-        "nvim-treesitter/nvim-treesitter",
-      },
-      opts = {
-        workspaces = {
-          {
-            name = "notes",
-            path = "~/Google/Sync/Obsidian/notes",
-          },
-        },
-        ui = { enable = false },
-      },
-    },
+   -- {
+   --    "epwalsh/obsidian.nvim",
+   --    version = "*",
+   --    lazy = true,
+   --    ft = "markdown",
+   --    dependencies = {
+   --      "nvim-lua/plenary.nvim",
+   --      "hrsh7th/nvim-cmp",
+   --      "nvim-telescope/telescope.nvim",
+   --      "nvim-treesitter/nvim-treesitter",
+   --    },
+   --    opts = {
+   --      workspaces = {
+   --        {
+   --          name = "notes",
+   --          path = "~/Google/Sync/Obsidian/notes",
+   --        },
+   --      },
+   --      ui = { enable = false },
+   --    },
+   --  },
     -- Language server protocol
     {
       "hrsh7th/nvim-cmp",
@@ -909,43 +1042,23 @@ require("lazy").setup({
         "hrsh7th/cmp-path",
         "saadparwaiz1/cmp_luasnip",
         "L3MON4D3/luasnip",
-        "rafamadriz/friendly-snippets",
-        "zbirenbaum/copilot.lua",
+        "rafamadriz/friendly-snippets"
       },
-      -- Currently debating whether or not to remove snippets completely, since I never use them.
       config = function()
         local cmp = require'cmp';
         local luasnip = require'luasnip';
-        local copilot = require'copilot.suggestion';
 
         local has_words_before = function()
           local line, col = unpack(vim.api.nvim_win_get_cursor(0))
           return col ~= 0 and vim.api.nvim_buf_get_lines(0, line-1, line, true)[1]:sub(col, col):match("%s") == nil
         end
-        local ctrl_e_function = function(fallback)
-          if cmp.visible() then
-            local selected = cmp.get_selected_entry()
-            if selected ~= nil then
-              cmp.confirm({ select = false })
-            elseif copilot.is_visible() then
-              copilot.accept()
-            end
-            -- if luasnip.expandable() then
-            --   luasnip.expand()
-            -- else
-            --   cmp.confirm({ select = false })
-            -- end
-          else
-            fallback()
-          end
-        end
         local tab_function = function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
-          elseif luasnip.locally_jumpable(1) then
-            luasnip.jump(1)
-          -- elseif has_words_before() then
-          --   cmp.complete()
+          elseif luasnip.expand_or_jumpable() then
+            luasnip.expand_or_jump()
+          elseif has_words_before() then
+            cmp.complete()
           else
             fallback()
           end
@@ -953,7 +1066,7 @@ require("lazy").setup({
         local stab_function = function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
-          elseif luasnip.locally_jumpable(-1) then
+          elseif luasnip.jumpable(-1) then
             luasnip.jump(-1)
           else
             fallback()
@@ -961,16 +1074,15 @@ require("lazy").setup({
         end
 
         cmp.setup({
-          -- snippet = {
-          --   expand = function(arg)
-          --     luasnip.lsp_expand(arg.body)
-          --   end,
-          -- },
+          snippet = {
+            expand = function(arg)
+              luasnip.lsp_expand(arg.body)
+            end,
+          },
           mapping = {
             ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
             ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-            -- ['<C-e>'] = cmp.mapping(cmp.mapping.confirm({ select = false })),
-            ['<C-e>'] = cmp.mapping(ctrl_e_function, { 'i', 's' }),
+            ['<C-e>'] = cmp.mapping(cmp.mapping.confirm({ select = false })),
             ['<C-f>'] = cmp.mapping(cmp.mapping.close(), { 'i', 's' }),
             ['<Tab>'] = cmp.mapping(tab_function, { 'i', 's' }),
             ['<S-Tab>'] = cmp.mapping(stab_function, { 'i', 's' }),
@@ -1007,13 +1119,6 @@ require("lazy").setup({
         local lspconfig = require'lspconfig'
         local capabilities = require'cmp_nvim_lsp'.default_capabilities()
 
-        -- Borders around the LSP hover floating window
-        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-          vim.lsp.handlers.hover, {
-            border = "rounded",
-          }
-        )
-
         if vim.fn.executable('clangd') == 1 then
           lspconfig.clangd.setup{
             on_attach = require'illuminate'.on_attach,
@@ -1026,11 +1131,13 @@ require("lazy").setup({
           lspconfig.pyright.setup{
             on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
+            cmd = { "pyright-langserver", "--stdio", "--max-old-space-size=40960" },
             settings = {
               python = {
                 analysis = {
                   typeCheckingMode = "basic",
                   autoSearchPaths = true,
+                  diagnosticMode = "openFilesOnly",
                   useLibraryCodeForTypes = true,
                 }
               }
@@ -1125,8 +1232,8 @@ require("lazy").setup({
             settings = {
               ["rust-analyzer"] = {
                 completion = {
-                  addCallArgumentSnippets = false,
-                  addCallParenthesis = false,
+                  addCallArgumentSnippets = true,
+                  addCallParenthesis = true,
                 },
                 diagnostics = {
                   disabled = {"inactive-code"},
@@ -1228,3 +1335,4 @@ require("lazy").setup({
 ------------------------------------------------------------------------------
 -- LSP loading becomes lazy, so this has to be called manually.
 vim.cmd.LspStart()
+

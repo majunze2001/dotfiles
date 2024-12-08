@@ -1,6 +1,6 @@
 [user]
-  email = jwnchung@umich.edu
-  name = Jae-Won Chung
+  email = jeffjma@umich.edu
+  name = Jeff Ma
 [alias]
   last = log -1 HEAD
   unstage = reset HEAD --
@@ -30,4 +30,4 @@
 [branch]
 	sort = -committerdate
 [init]
-	defaultBranch = master
+	defaultBranch = main
