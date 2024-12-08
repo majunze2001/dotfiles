@@ -6,7 +6,7 @@ Initialize the dotfile management environment.
 
 ```bash
 git clone --bare git@github.com:jaywonchung/dotfiles.git $HOME/.dotfiles
-git --git-dir=$HOME/.dotfiles --work-tree=$HOME checkout master
+git --git-dir=$HOME/.dotfiles --work-tree=$HOME checkout main
 source .dotmodules/init.sh
 ```
 
@@ -28,7 +28,7 @@ zsh ~/.dotmodules/install/all.sh
 
 Or just to everything at once. Very secure, obviously.
 ```bash
-source <(curl https://raw.githubusercontent.com/majunze2001/dotfiles/master/install.sh)
+source <(curl https://raw.githubusercontent.com/majunze2001/dotfiles/main/install.sh)
 ```
 
 Restarting the shell will finish the installation.
