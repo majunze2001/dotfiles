@@ -25,3 +25,10 @@ git clone --depth=1 https://github.com/zdharma-continuum/fast-syntax-highlightin
 installing "zsh-autosuggestions"
 git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 
+installing "direnv"
+mkdir -p ~/.local/bin
+if [[ $(uname -s) = Darwin ]]; then
+  brew install direnv
+else
+  curl -sfL https://direnv.net/install.sh | bin_path=~/.local/bin bash
+fi
