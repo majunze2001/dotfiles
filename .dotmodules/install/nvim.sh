@@ -11,6 +11,13 @@ installing() {
 }
 
 installing "neovim"
+
+# Check if Neovim is already installed
+if command -v nvim >/dev/null 2>&1; then
+  pprint "Neovim is already installed. Skipping installation."
+  exit 0
+fi
+
 unamestr="$(uname)"
 if [[ "$unamestr" == "Darwin" ]]; then
   cd /tmp
