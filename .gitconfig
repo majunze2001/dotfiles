@@ -1,6 +1,6 @@
 [user]
-	email = jaywonchung@snu.ac.kr
-	name = Jaewon Chung
+	email = jeffjma@umich.edu
+	name = Jeff Ma
 [alias]
 	last = log -1 HEAD
 	unstage = reset HEAD --
