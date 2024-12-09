@@ -31,3 +31,5 @@
 	sort = -committerdate
 [init]
 	defaultBranch = main
+[credential]
+	helper = cache
