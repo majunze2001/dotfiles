@@ -15,21 +15,21 @@ installing "neovim"
 # Check if Neovim is already installed
 if command -v nvim >/dev/null 2>&1; then
   pprint "Neovim is already installed. Skipping installation."
-  exit 0
+else
+  unamestr="$(uname)"
+  if [[ "$unamestr" == "Darwin" ]]; then
+    cd /tmp
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-macos.tar.gz
+    tar xzvf nvim-macos.tar.gz
+    mkdir -p ~/.local
+    rsync -a nvim-macos/* ~/.local/
+  elif [[ "$unamestr" == "Linux" ]]; then
+    cd /tmp
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    tar xzvf nvim-linux64.tar.gz
+    mkdir -p ~/.local
+    rsync -a nvim-linux64/* ~/.local/
+  fi
+  echo "done"
 fi
 
-unamestr="$(uname)"
-if [[ "$unamestr" == "Darwin" ]]; then
-  cd /tmp
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-macos.tar.gz
-  tar xzvf nvim-macos.tar.gz
-  mkdir -p ~/.local
-  rsync -a nvim-macos/* ~/.local/
-elif [[ "$unamestr" == "Linux" ]]; then
-  cd /tmp
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-  tar xzvf nvim-linux64.tar.gz
-  mkdir -p ~/.local
-  rsync -a nvim-linux64/* ~/.local/
-fi
-echo "done"

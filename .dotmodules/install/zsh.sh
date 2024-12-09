@@ -22,25 +22,25 @@ else
 fi
 
 # Install Powerlevel10k
-if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
+if [[ ! -d "$HOME/.oh-my-zsh/themes/powerlevel10k" ]]; then
   installing "Powerlevel10k"
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/themes/powerlevel10k"
 else
   pprint "Powerlevel10k is already installed. Skipping."
 fi
 
 # Install fast-syntax-highlighting
-if [[ ! -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]]; then
+if [[ ! -d "$HOME/.oh-my-zsh/plugins/fast-syntax-highlighting" ]]; then
   installing "fast-syntax-highlighting"
-  git clone --depth=1 https://github.com/zdharma-continuum/fast-syntax-highlighting.git "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
+  git clone --depth=1 https://github.com/zdharma-continuum/fast-syntax-highlighting.git "$HOME/.oh-my-zsh/plugins/fast-syntax-highlighting"
 else
   pprint "fast-syntax-highlighting is already installed. Skipping."
 fi
 
 # Install zsh-autosuggestions
-if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
+if [[ ! -d "$HOME/.oh-my-zsh/plugins/zsh-autosuggestions" ]]; then
   installing "zsh-autosuggestions"
-  git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+  git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/plugins/zsh-autosuggestions"
 else
   pprint "zsh-autosuggestions is already installed. Skipping."
 fi
