@@ -1324,6 +1324,12 @@ require("lazy").setup({
         }
       end
     },
+    {
+      'Kicamon/markdown-table-mode.nvim',
+      config = function()
+        require('markdown-table-mode').setup()
+      end
+    }
   },
   ui = { custom_keys = {}, },
   readme = { enabled = false },
