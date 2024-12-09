@@ -1,3 +1,4 @@
+
 #-------------------------------------------------------------------
 # Powerlevel10k instant prompt
 #-------------------------------------------------------------------
@@ -35,6 +36,9 @@ HYPHEN_INSENSITIVE="true"
 
 # Update without asking me
 DISABLE_UPDATE_PROMPT="true"
+
+# We use eza color theme
+DISABLE_LS_COLORS="true"
 
 # Oh-my-zsh plugins
 plugins=(git fast-syntax-highlighting zsh-autosuggestions docker colored-man-pages)
@@ -120,6 +124,7 @@ export PATH="$HOME/.local/src/node/bin:$PATH"
 
 # eza
 if command -v eza 1>/dev/null 2>/dev/null; then
+  export EZA_CONFIG_DIR="$HOME/.config/eza"
   __eza_params=('--git' '--icons' '--classify' '--group-directories-first' '--time-style=long-iso' '--group')
   alias ls='eza $__eza_params'
   alias l='eza --all --header --long $__eza_params'
