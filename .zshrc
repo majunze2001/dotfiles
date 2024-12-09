@@ -52,12 +52,6 @@ source $ZSH/oh-my-zsh.sh
 # Language environment
 export LANG=en_US.UTF-8
 
-# Enable dircolors
-if [ -x /usr/bin/dircolors ]; then
-  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-  alias ls='ls --color=auto'
-fi
-
 # Shell options
 setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format.
 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
@@ -130,6 +124,12 @@ if command -v eza 1>/dev/null 2>/dev/null; then
   alias l='eza --all --header --long $__eza_params'
   alias ll='eza --header --long $__eza_params'
   alias tree='eza --tree $__eza_params'
+else
+  # Enable dircolors
+  if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+  fi
 fi
 
 # Neovim + diffview.nvim as git difftool
