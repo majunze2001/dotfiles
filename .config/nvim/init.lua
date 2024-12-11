@@ -402,15 +402,15 @@ require("lazy").setup({
     { "numToStr/Comment.nvim" },
     { "farmergreg/vim-lastplace" },
     { "tpope/vim-repeat" },
-    {
-      "machakann/vim-sandwich",
-      init = function()
-        vim.g.sandwich_no_default_key_mappings = 1
-      end,
-      config = function()
-        vim.cmd('runtime macros/sandwich/keymap/surround.vim')
-      end,
-    },
+    -- {
+    --   "machakann/vim-sandwich",
+    --   init = function()
+    --     vim.g.sandwich_no_default_key_mappings = 1
+    --   end,
+    --   config = function()
+    --     vim.cmd('runtime macros/sandwich/keymap/surround.vim')
+    --   end,
+    -- },
     {
       "foosoft/vim-argwrap",
       init = function()
@@ -758,6 +758,7 @@ require("lazy").setup({
 
           -- Default mappings.
           vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node,          opts('CD'))
+          vim.keymap.set('n', '<c>', api.tree.change_root_to_node,          opts('CD'))
           vim.keymap.set('n', '<C-k>', api.node.show_info_popup,              opts('Info'))
           vim.keymap.set('n', '<C-r>', api.fs.rename_sub,                     opts('Rename: Omit Filename'))
           vim.keymap.set('n', '<C-v>', api.node.open.vertical,                opts('Open: Vertical Split'))
@@ -772,8 +773,8 @@ require("lazy").setup({
           vim.keymap.set('n', 'a',     api.fs.create,                         opts('Create'))
           vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   opts('Move Bookmarked'))
           vim.keymap.set('n', 'B',     api.tree.toggle_no_buffer_filter,      opts('Toggle No Buffer'))
-          vim.keymap.set('n', 'c',     api.fs.copy.node,                      opts('Copy'))
-          vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,      opts('Toggle Git Clean'))
+          -- vim.keymap.set('n', 'c',     api.fs.copy.node,                      opts('Copy'))
+          -- vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,      opts('Toggle Git Clean'))
           vim.keymap.set('n', '[c',    api.node.navigate.git.prev,            opts('Prev Git'))
           vim.keymap.set('n', ']c',    api.node.navigate.git.next,            opts('Next Git'))
           vim.keymap.set('n', 'd',     api.fs.remove,                         opts('Delete'))
