@@ -253,3 +253,8 @@ unset _UNAME
 
 # Load env
 [[ ! -f ~/.env.sh ]] || source ~/.env.sh
+
+# Disable GUI window for git
+unset SSH_ASKPASS
+unset GIT_ASKPASS
+export GIT_TERMINAL_PROMPT=1
