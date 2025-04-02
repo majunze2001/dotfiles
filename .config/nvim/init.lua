@@ -458,32 +458,32 @@ require("lazy").setup({
     --     vim.g.floaterm_opener = "tabe"
     --   end,
     -- },
-    -- {
-    --   "zbirenbaum/copilot.lua",
-    --   config = function()
-    --     require("copilot").setup({
-    --       suggestion = {
-    --         enabled = true,
-    --         auto_trigger = true,
-    --         keymap = {
-    --           accept = "<C-e>",  -- Doesn't conflict with cmp because select = false.
-    --           accept_line = "<M-e>",
-    --         },
-    --       },
-    --       filetypes = {
-    --         python = true,
-    --         rust = true,
-    --         go = true,
-    --         cpp = true,
-    --         bash = true,
-    --         zig = true,
-    --         ["*"] = false,
-    --       },
-    --     })
-    --
-    --     vim.keymap.set('n', '<Leader>cd', ':Copilot disable<CR>', { silent = true })
-    --   end,
-    -- },
+    {
+      "zbirenbaum/copilot.lua",
+      config = function()
+        require("copilot").setup({
+          suggestion = {
+            enabled = true,
+            auto_trigger = true,
+            keymap = {
+              accept = "<C-e>",  -- Doesn't conflict with cmp because select = false.
+              accept_line = "<M-e>",
+            },
+          },
+          filetypes = {
+            python = true,
+            rust = true,
+            go = true,
+            cpp = true,
+            bash = true,
+            zig = true,
+            ["*"] = false,
+          },
+        })
+
+        vim.keymap.set('n', '<Leader>cd', ':Copilot disable<CR>', { silent = true })
+      end,
+    },
     -- {
     --   "yetone/avante.nvim",
     --   event = "VeryLazy",

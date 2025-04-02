@@ -1,20 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -ev
 
-VERSION=${VERSION:-stable}
+VERSION=${VERSION:-v0.10.4}
 
 unamestr="$(uname)"
 if [[ "$unamestr" == "Darwin" ]]; then
   OS=macos-arm64
 elif [[ "$unamestr" == "Linux" ]]; then
-  OS=linux64
+  OS=linux-x86_64
 fi
 
 # Get nvim release
 cd /tmp
 curl -LO https://github.com/neovim/neovim/releases/download/$VERSION/nvim-$OS.tar.gz
-xattr -c nvim-$OS.tar.gz || true
+if [[ "$unamestr" == "Darwin" ]]; then
+  xattr -c nvim-$OS.tar.gz || true
+fi
 tar xzf nvim-$OS.tar.gz
 mkdir -p ~/.local
 
