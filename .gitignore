@@ -1,3 +1,20 @@
-.dotfiles
-.envrc
-lazy-lock.json
+# Ignore everything
+*
+
+# But track these specific folders
+!.config/
+!.config/**
+
+# exclude the ones with api keys/authentication
+.config/github-copilot
+
+!.dotmodules/
+!.dotmodules/**
+!.gitconfig
+!.p10k.zsh
+!.tmux.conf
+!.direnvrc
+!.zshrc
+
+# Always track .gitignore itself
+!.gitignore

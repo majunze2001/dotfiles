@@ -8,7 +8,7 @@ end
 
 -- Options
 vim.opt.autoindent = true           -- Insert indent on newline
-vim.opt.cindent = true              -- Autoindent for C
+vim.opt.cindent = false             -- Autoindent for C has weird indentation on (<CR> when ( is the first char in the line
 vim.opt.smartindent = true          -- Aware of {, }, etc
 vim.opt.scrolloff = 2               -- Lines between cursor and screen
 vim.opt.softtabstop = 2             -- Width of <tab>
@@ -23,7 +23,7 @@ vim.opt.wildmode = { "longest:full", "full" }  -- <Tab> spawns wildmenu, then <T
 vim.opt.ignorecase = true           -- Case-insensitive search
 vim.opt.smartcase = true            -- ... except when uppercase characters are typed
 vim.opt.incsearch = true            -- Search as I type
-vim.opt.hidden = true               -- Allow switching to other buffers without saving
+vim.opt.hidden = false              -- Does not allow switching to other buffers without saving
 vim.opt.autoread = true             -- Auto load when current file is edited somewhere
 vim.opt.lazyredraw = true           -- Screen not updated during macros, etc
 vim.opt.diffopt:append("algorithm:patience")  -- Use the patience algorithm
@@ -35,9 +35,9 @@ vim.opt.relativenumber = true       -- Line numbers are relative to current line
 vim.opt.showmode = false            -- Do not show current mode at the bottom
 vim.opt.cursorline = true           -- Highlight the row where the cursor is on
 vim.opt.signcolumn = "yes"          -- Space for LSP diagnostics and gitsigns
-vim.opt.mouse = { a = true }        -- Mouse is useful for visual selection
-vim.opt.history = 256               -- History for commands, searches, etc
-vim.opt.clipboard = "unnamedplus"
+vim.opt.mouse = { a = true }        -- Enable mouse
+vim.opt.history = 2048              -- History for commands, searches, etc
+vim.opt.clipboard = { "unnamed", "unnamedplus" }  -- Populate clipboard to everywhere
 
 -- Syntax highlighting
 vim.cmd('syntax on')
@@ -55,19 +55,20 @@ end
 ------------------------------------------------------------------------------
 -- Leader keys
 vim.g.maplocalleader = ','
-vim.g.mapleader = ","
+vim.g.mapleader = ','
 
 -- Cursor movement
+-- This overwrite
+-- H: move to the first line of the window
+-- L: move to the last line of the window
 vim.keymap.set({ 'n', 'v' }, 'H', '^')
 vim.keymap.set({ 'n', 'v' }, 'L', '$')
--- vim.keymap.set('n', ';', ':')
 
 -- Suspend vim
 vim.keymap.set('n', '<C-z>', ':suspend<CR>')
 
 -- Unhighlight all search highlights
--- vim.keymap.set('n', '<C-c>', ':noh<CR>', { silent = true })
-vim.keymap.set('i', '<C-c>', '<C-[>', { silent = true })
+vim.keymap.set('n', '<C-c>', ':noh<CR>', { silent = true })
 
 -- Toggle relative line numbers
 vim.keymap.set('n', '<Leader>r', function()
@@ -85,21 +86,24 @@ vim.keymap.set('n', '<Leader>qq', ':q!<CR>')
 vim.keymap.set('n', '<Leader>qa', ':qa<CR>')
 vim.keymap.set('n', '<Leader>s', ':sp<CR>')
 vim.keymap.set('n', '<Leader>v', ':vsp<CR>')
+-- show path
 vim.keymap.set('n', '<Leader>p', ":echo expand('%:p')<CR>")
 
 -- Delete selected area and replace with yanked content
 -- without overwriting the copy register "
 vim.keymap.set('v', '<Leader>p', '"_dP')
 
--- <C-c> and <ESC> are not the same
+-- Make <C-c> the same as <ESC> in insert and visual modes
 vim.keymap.set({ 'i', 'v' }, '<C-c>', '<ESC>')
 
--- Automatically closing brackets
+-- Automatically appending a closing bracket in python 
+-- in a new line when typing { or ( with carriage return
 vim.keymap.set('i', '{<CR>', function()
   local filetype = vim.bo.filetype
   if filetype == "python" then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('{<CR><BS><BS>}<ESC>O<BS>', true, false, true), 'n', true)
   else
+    -- due to smartindent, the newline has one extra indentation
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('{<CR>}<ESC>O', true, false, true), 'n', true)
   end
 end)
@@ -112,12 +116,12 @@ vim.keymap.set('i', '(<CR>', function()
   end
 end)
 
--- vim.keymap.set('i', '{<CR>', '{<CR><BS><BS>}<ESC>O')
-
 -- Surrounding with brackets
 vim.keymap.set('n', '(<CR>', 'i(<CR><ESC>o)<ESC>k^')
 vim.keymap.set('n', '{<CR>', 'i{<CR><ESC>o}<ESC>k^')
 vim.keymap.set('n', '[<CR>', 'i[<CR><ESC>o]<ESC>k^')
+
+-- MARKER for read -- 
 
 -- Diff mappings
 vim.keymap.set('n', '<Leader>dg', ':diffget<CR>')
@@ -147,13 +151,6 @@ nnoremap <silent> g* :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=1<CR
 nnoremap <silent> g# :let @/='\v'.expand('<cword>')<CR>:let v:searchforward=0<CR>n
 ]])
 
--- Neovim terminal
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
--- vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h')
--- vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j')
--- vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k')
--- vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l')
-
 -- Consistency with C and D
 vim.keymap.set('n', 'Y', 'y$')
 
@@ -175,9 +172,6 @@ end, { expr = true, silent = true })
 vim.keymap.set('n', 'j', function()
   return (vim.v.count > 5 and "m'" .. vim.v.count or "") .. 'j'
 end, { expr = true, silent = true })
-
--- Delete one character in insert mode
-vim.keymap.set('i', '<C-d>', '<DEL>')
 
 
 ------------------------------------------------------------------------------
@@ -219,6 +213,11 @@ vim.api.nvim_create_autocmd("VimResized", {
 vim.api.nvim_create_autocmd("VimResized", {
   pattern = "*",
   callback = function()
+    -- Skip terminal buffers
+    if vim.bo.buftype == "terminal" then
+      return
+    end
+
     if vim.o.columns < 75 then
       vim.opt.number = false
       vim.opt.relativenumber = false
@@ -257,16 +256,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
 ------------------------------------------------------------------------------
 -- Language settings
 ------------------------------------------------------------------------------
--- Go
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "go",
-  callback = function()
-    vim.bo.shiftwidth = 8
-    vim.bo.tabstop = 8
-    vim.bo.softtabstop = 8
-  end
-})
-
 -- LaTeX
 vim.g.tex_flavor = "latex"
 
@@ -275,24 +264,44 @@ vim.g.do_filetype_lua = 1
 vim.g.did_load_filetypes = 0
 
 ------------------------------------------------------------------------------
--- My Term settings
+-- Terminal settings
 -- These are to make the terminal inegration behaves like vim
+-- On terminal split, enter insert mode without line numbers
+-- On shell logout, close the split
+-- Also make sure the cursor is a blinking block
 ------------------------------------------------------------------------------
-
 -- Start in insert mode when opening a terminal
 vim.api.nvim_create_autocmd('TermOpen', {
   pattern = '*',
   callback = function()
     -- Start in insert mode
     vim.cmd('startinsert')
-    
     -- Disable absolute line numbering
     vim.wo.number = false
-    
     -- Disable relative line numbering
     vim.wo.relativenumber = false
   end,
 })
+
+-- Prevent mouse clicks from switching terminal buffers to normal mode
+-- vim.api.nvim_create_autocmd({"TermOpen"}, {
+--   pattern = "*",
+--   callback = function()
+--     -- Disable mouse in terminal buffer to prevent accidental mode switching
+--     -- vim.opt_local.mouse = ""
+--
+--     -- Alternative approach: auto-enter insert mode after mouse click in terminal
+--     vim.api.nvim_create_autocmd({"BufEnter", "FocusGained", "CursorMoved"}, {
+--       buffer = vim.api.nvim_get_current_buf(),
+--       callback = function()
+--         -- Only re-enter insert mode if this is a terminal buffer
+--         if vim.bo.buftype == "terminal" and vim.fn.mode() ~= "t" then
+--           vim.cmd("startinsert")
+--         end
+--       end
+--     })
+--   end
+-- })
 
 -- Function to re-enter insert mode if needed
 local function TermEnter()
@@ -382,7 +391,6 @@ for _, mode in ipairs({ 'n', 't' }) do
   vim.keymap.set(mode, '<C-w>K', '<cmd>wincmd K<CR>', { silent = true })
   vim.keymap.set(mode, '<C-w>J', '<cmd>wincmd J<CR>', { silent = true })
 end
-
 
 ------------------------------------------------------------------------------
 -- Plugins
@@ -559,7 +567,7 @@ require("lazy").setup({
         end
 
         local function my_location()
-          return [[%3l/%L]]
+          return [[%3l/%L:%2c]]
         end
 
         require('lualine').setup{
@@ -677,7 +685,7 @@ require("lazy").setup({
 
         " nvim-cmp autocompletion menu
         highlight  Pmenu       guibg=#0e1420
-        
+
         " diffview.nvim
         highlight  DiffviewFilePanelTitle   guifg=#74c7ed
         highlight  DiffviewFilePanelCounter guifg=#74c7ed
@@ -1299,6 +1307,15 @@ require("lazy").setup({
             vim.treesitter.start()
           end,
         })
+        vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "BufReadPost" }, {
+          pattern = "*.md",
+          callback = function()
+            -- Highlighting column 81
+            vim.cmd [[highlight ColorColumn guibg=#51576d]]
+            vim.fn.matchadd("ColorColumn", "\\%81v", 100)
+            vim.opt.spell = true
+          end,
+        })
       end
     },
     {
@@ -1330,7 +1347,7 @@ require("lazy").setup({
       config = function()
         require('markdown-table-mode').setup()
       end
-    }
+    },
   },
   ui = { custom_keys = {}, },
   readme = { enabled = false },
@@ -1342,4 +1359,3 @@ require("lazy").setup({
 ------------------------------------------------------------------------------
 -- LSP loading becomes lazy, so this has to be called manually.
 vim.cmd.LspStart()
-

@@ -41,7 +41,7 @@ DISABLE_UPDATE_PROMPT="true"
 DISABLE_LS_COLORS="true"
 
 # Oh-my-zsh plugins
-plugins=(git fast-syntax-highlighting zsh-autosuggestions docker colored-man-pages)
+plugins=(git fast-syntax-highlighting zsh-autosuggestions docker colored-man-pages direnv)
 
 # Disable completion script permission check
 ZSH_DISABLE_COMPFIX="true"
@@ -198,11 +198,6 @@ function waitpid() {
   tail --pid $1 -f /dev/null
 }
 
-# Automatically reset cursor shape
-function rc() {
-  print -n '\033[5 q'
-}
-
 #-------------------------------------------------------------------
 # Environment variables
 #-------------------------------------------------------------------
@@ -254,7 +249,10 @@ unset _UNAME
 # Load env
 [[ ! -f ~/.env.sh ]] || source ~/.env.sh
 
-# Disable GUI window for git
-unset SSH_ASKPASS
-unset GIT_ASKPASS
-export GIT_TERMINAL_PROMPT=1
+# Ensure cursor shape consistency
+case "$TERM" in
+  xterm-ghostty|xterm-256color|tmux-256color)
+    echo -ne "\e[1 q" # Set cursor to blinking block
+    ;;
+esac
+
