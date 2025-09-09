@@ -897,8 +897,8 @@ require("lazy").setup({
       opts = {
         columns = {},  -- Disable icons
         keymaps = {
-          ["<C-s>"] = "actions.select_split",
-          ["<C-v>"] = "actions.select_vsplit",
+          -- ["<C-s>"] = "actions.select_split",
+          -- ["<C-v>"] = "actions.select_vsplit",
           ["<C-g>"] = "actions.select_tab",
         },
         view_options = {
