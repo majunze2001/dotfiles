@@ -41,7 +41,7 @@ DISABLE_UPDATE_PROMPT="true"
 DISABLE_LS_COLORS="true"
 
 # Oh-my-zsh plugins
-plugins=(git fast-syntax-highlighting zsh-autosuggestions docker colored-man-pages direnv)
+plugins=(git fast-syntax-highlighting zsh-autosuggestions docker colored-man-pages)
 
 # Disable completion script permission check
 ZSH_DISABLE_COMPFIX="true"
