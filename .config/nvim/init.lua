@@ -256,6 +256,14 @@ vim.api.nvim_create_autocmd("VimEnter", {
 ------------------------------------------------------------------------------
 -- Language settings
 ------------------------------------------------------------------------------
+-- Python: disable smartindent to allow shifting comment lines
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "python",
+  callback = function()
+    vim.opt_local.smartindent = false
+  end
+})
+
 -- LaTeX
 vim.g.tex_flavor = "latex"
 
@@ -410,15 +418,7 @@ require("lazy").setup({
     { "numToStr/Comment.nvim" },
     { "farmergreg/vim-lastplace" },
     { "tpope/vim-repeat" },
-    -- {
-    --   "machakann/vim-sandwich",
-    --   init = function()
-    --     vim.g.sandwich_no_default_key_mappings = 1
-    --   end,
-    --   config = function()
-    --     vim.cmd('runtime macros/sandwich/keymap/surround.vim')
-    --   end,
-    -- },
+    {"tpope/vim-surround"},
     {
       "foosoft/vim-argwrap",
       init = function()
@@ -485,6 +485,8 @@ require("lazy").setup({
             cpp = true,
             bash = true,
             zig = true,
+            tex = true,
+            markdown = true,
             ["*"] = false,
           },
         })
@@ -1319,6 +1321,7 @@ require("lazy").setup({
       end
     },
     {
+      -- :h vimtex-default-mappings
       "lervag/vimtex",
       init = function()
         vim.g.vimtex_view_method = 'sioyek'
@@ -1340,12 +1343,22 @@ require("lazy").setup({
           'overfull',
           'Overfull',
         }
-      end
+      end,
+      config = function()
+        vim.keymap.set({'n', 'x'}, '<leader>cc', '<Plug>(vimtex-cmd-create)')
+      end,
     },
     {
       'Kicamon/markdown-table-mode.nvim',
       config = function()
         require('markdown-table-mode').setup()
+      end,
+    },
+    {
+      'dhruvasagar/vim-zoom',
+      -- <C-W>m        <Plug>(zoom-toggle)
+      config = function()
+        vim.keymap.set("n", "<Leader>z",  "<Plug>(zoom-toggle)", { silent = true })
       end
     },
   },
