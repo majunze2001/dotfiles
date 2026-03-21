@@ -256,3 +256,19 @@ case "$TERM" in
     ;;
 esac
 
+# queue up a command
+# tail -f /dev/null --pid=306426 && python3
+queue() {
+  if (( $# < 2 )); then
+    print -u2 "usage: queue <pid> <command> [args ...]"
+    return 2
+  fi
+
+  local dep_pid=$1
+  shift
+
+  print -r -- "$$"   # print this queue process PID
+
+  tail --pid="$dep_pid" -f /dev/null || return 1
+  exec "$@"
+}
