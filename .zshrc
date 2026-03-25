@@ -256,8 +256,24 @@ case "$TERM" in
     ;;
 esac
 
+
+export PATH="/opt/homebrew/opt/php@8.1/bin:$PATH"
+export PATH="/opt/homebrew/opt/php@8.1/sbin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/jeffjma/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# opencode
+export PATH=/Users/jeffjma/.opencode/bin:$PATH
+
 # queue up a command
 # tail -f /dev/null --pid=306426 && python3
+#
 queue() {
   if (( $# < 2 )); then
     print -u2 "usage: queue <pid> <command> [args ...]"
@@ -269,6 +285,6 @@ queue() {
 
   print -r -- "$$"   # print this queue process PID
 
-  tail --pid="$dep_pid" -f /dev/null || return 1
+  tail --pid="$dep_pid" -f /dev/null
   exec "$@"
 }
