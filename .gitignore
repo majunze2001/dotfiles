@@ -4,6 +4,8 @@
 # But track these specific folders
 !.config/
 !.config/**
+!.ssh/
+!.ssh/rc
 
 # exclude the ones with api keys/authentication
 .config/github-copilot
