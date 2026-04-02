@@ -6,6 +6,9 @@
 !.config/**
 !.ssh/
 !.ssh/rc
+!.local
+!.local/bin
+!.local/bin/yolo
 
 # exclude the ones with api keys/authentication
 .config/github-copilot

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Auto-approve Claude Code permission prompts in tmux
+# Usage: ./auto-approve.sh <pane_id>
+# Example: ./auto-approve.sh %143
+
+PANE="${1:?Usage: $0 <pane_id>}"
+INTERVAL=0.5
+
+echo "Auto-approving Claude Code prompts in pane: $PANE"
+echo "Press Ctrl+C to stop."
+
+while true; do
+    content=$(tmux capture-pane -t "$PANE" -p 2>/dev/null)
+    if echo "$content" | grep -qE "Do you want to proceed|Do you want to make this edit|Do you want to create|Do you want to allow Claude to fetch this content|Do you want to overwrite"; then
+        tmux send-keys -t "$PANE" Enter
+        echo "[$(date +%H:%M:%S)] Auto-approved"
+        sleep 1
+    fi
+    sleep "$INTERVAL"
+done
+
