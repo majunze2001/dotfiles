@@ -5,10 +5,15 @@ set -ev
 VERSION=${VERSION:-v0.10.4}
 
 unamestr="$(uname)"
+archstr="$(uname -m)"
 if [[ "$unamestr" == "Darwin" ]]; then
   OS=macos-arm64
 elif [[ "$unamestr" == "Linux" ]]; then
-  OS=linux-x86_64
+  if [[ "$archstr" == "aarch64" || "$archstr" == "arm64" ]]; then
+    OS=linux-arm64
+  else
+    OS=linux-x86_64
+  fi
 fi
 
 # Get nvim release
