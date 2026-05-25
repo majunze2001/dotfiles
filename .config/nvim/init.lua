@@ -672,7 +672,7 @@ require("lazy").setup({
           vim.keymap.set('n', 'a',     api.fs.create,                         opts('Create'))
           vim.keymap.set('n', 'bmv',   api.marks.bulk.move,                   opts('Move Bookmarked'))
           vim.keymap.set('n', 'B',     api.tree.toggle_no_buffer_filter,      opts('Toggle No Buffer'))
-          -- vim.keymap.set('n', 'c',     api.fs.copy.node,                      opts('Copy'))
+          vim.keymap.set('n', 'c',     api.fs.copy.node,                      opts('Copy'))
           -- vim.keymap.set('n', 'C',     api.tree.toggle_git_clean_filter,      opts('Toggle Git Clean'))
           vim.keymap.set('n', '[c',    api.node.navigate.git.prev,            opts('Prev Git'))
           vim.keymap.set('n', ']c',    api.node.navigate.git.next,            opts('Next Git'))
@@ -1008,7 +1008,7 @@ require("lazy").setup({
       },
       config = function()
         -- Key bindings. Some LSP bindings are set when loading telescope.nvim.
-        vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, { silent = true })
+        vim.keymap.set('n', 'lr', vim.lsp.buf.rename, { silent = true })
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { silent = true })
         vim.keymap.set('n', 'gD', vim.diagnostic.open_float, { silent = true })
@@ -1207,6 +1207,12 @@ require("lazy").setup({
             vim.opt.spell = true
           end,
         })
+        vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "BufReadPost" }, {
+          pattern = "*.tex",
+          callback = function()
+            vim.opt.spell = true
+          end,
+        })
       end
     },
     {
@@ -1247,7 +1253,7 @@ require("lazy").setup({
       'dhruvasagar/vim-zoom',
       -- <C-W>m        <Plug>(zoom-toggle)
       config = function()
-        vim.keymap.set("n", "<Leader>z",  "<Plug>(zoom-toggle)", { silent = true })
+        vim.keymap.set("n", "<C-w>z",  "<Plug>(zoom-toggle)", { silent = true })
       end
     },
   },
