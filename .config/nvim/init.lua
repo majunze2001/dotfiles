@@ -1194,8 +1194,8 @@ require("lazy").setup({
         }
         vim.api.nvim_create_autocmd("BufEnter", {
           pattern = { "*.c", "*.h", "*.cpp", "*.hpp", "*.py", "*.rs", "*.go", "*.vim", "*.lua", "*.zig", "*.md" },
-          callback = function()
-            vim.treesitter.start()
+          callback = function(args)
+            pcall(vim.treesitter.start, args.buf)
           end,
         })
         vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "BufReadPost" }, {
