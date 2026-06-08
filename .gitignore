@@ -9,6 +9,9 @@
 !.local
 !.local/bin
 !.local/bin/yolo
+!.claude/CLAUDE.md
+!.claude/statusline-command.sh
+
 
 # exclude the ones with api keys/authentication
 .config/github-copilot
