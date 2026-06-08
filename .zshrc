@@ -288,3 +288,6 @@ queue() {
   tail --pid="$dep_pid" -f /dev/null
   exec "$@"
 }
+
+export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
+export CLAUDE_CODE_DISABLE_MOUSE=1

@@ -89,12 +89,20 @@ vim.keymap.set('n', '<Leader>v', ':vsp<CR>')
 -- show path
 vim.keymap.set('n', '<Leader>p', ":echo expand('%:p')<CR>")
 
+-- format markdown table !column -t -s '|' -o '|'
+-- https://heitorpb.github.io/bla/format-tables-in-vim/
+vim.keymap.set('v', '<Leader>mkt', ":!column -t -s '|' -o '|'<CR>")
+
 -- Delete selected area and replace with yanked content
 -- without overwriting the copy register "
 vim.keymap.set('v', '<Leader>p', '"_dP')
 
--- Make <C-c> the same as <ESC> in insert and visual modes
-vim.keymap.set({ 'i', 'v' }, '<C-c>', '<ESC>')
+-- Make <C-c> the same as <ESC> in visual mode.
+-- NOTE: Do NOT map <C-c> in insert mode. Doing so makes Neovim treat <C-c>
+-- as an ordinary key rather than an interrupt, which breaks `r<C-c>` (it
+-- inserts a literal ^C instead of cancelling the replace). Default <C-c>
+-- already leaves insert mode, so the mapping is unnecessary there anyway.
+vim.keymap.set('v', '<C-c>', '<ESC>')
 
 -- Automatically appending a closing bracket in python 
 -- in a new line when typing { or ( with carriage return
