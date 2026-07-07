@@ -174,6 +174,9 @@ export PATH="$HOME/.local/go/bin:$HOME/go/bin:$PATH"
 #-------------------------------------------------------------------
 # Aliases
 #-------------------------------------------------------------------
+# icat
+alias icat='kitten icat'
+
 # git
 alias gcm='git commit -m'
 
