@@ -1016,7 +1016,7 @@ require("lazy").setup({
       },
       config = function()
         -- Key bindings. Some LSP bindings are set when loading telescope.nvim.
-        vim.keymap.set('n', 'lr', vim.lsp.buf.rename, { silent = true })
+        vim.keymap.set('n', '<Leader>lr', vim.lsp.buf.rename, { silent = true })
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { silent = true })
         vim.keymap.set('n', 'gD', vim.diagnostic.open_float, { silent = true })
