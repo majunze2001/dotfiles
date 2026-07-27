@@ -1,16 +1,21 @@
 # Dotfiles
 
+## TLDR
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/majunze2001/dotfiles/main/install.sh)"
+```
+
 ## Installing dotfiles on a new system
 
 Initialize the dotfile management environment.
 
 ```bash
-git clone --bare git@github.com:jaywonchung/dotfiles.git $HOME/.dotfiles
+git clone --bare git@github.com:majunze2001/dotfiles.git $HOME/.dotfiles
 git --git-dir=$HOME/.dotfiles --work-tree=$HOME checkout main
 source .dotmodules/init.sh
 ```
 
-**Warning.** My machines have SSH authentication set up with Github, so cloning with `git@github.com:jaywonchung/dotfiles.git` works. Others will have to clone with the URL `https://github.com/jaywonchung/dotfiles.git`.
+**Warning.** My machines have SSH authentication set up with Github, so cloning with `git@github.com:majunze2001/dotfiles.git` works. Others will have to clone with the URL `https://github.com/majunze2001/dotfiles.git`.
 
 A unified set of dotfiles for MacOS and Linux machines is on the `unified` branch:
 
@@ -26,10 +31,6 @@ Finally, run the installation script.
 zsh ~/.dotmodules/install/all.sh
 ```
 
-Or just to everything at once. Very secure, obviously.
-```bash
-source <(curl https://raw.githubusercontent.com/majunze2001/dotfiles/main/install.sh)
-```
 
 Restarting the shell will finish the installation.
 
