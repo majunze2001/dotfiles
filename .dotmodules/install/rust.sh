@@ -19,11 +19,19 @@ else
   pprint "Rust is already installed. Skipping."
 fi
 
-# installing "ripgrep"
-# cargo install ripgrep
+if ! command -v rg >/dev/null 2>&1; then
+  installing "ripgrep"
+  cargo install ripgrep
+else
+  pprint "ripgrep is already installed. Skipping."
+fi
 
-# installing "fd"
-# cargo install fd-find
+if ! command -v fd >/dev/null 2>&1; then
+  installing "fd"
+  cargo install fd-find
+else
+  pprint "fd is already installed. Skipping."
+fi
 
 installing "eza"
 cargo install eza
