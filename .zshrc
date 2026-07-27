@@ -13,7 +13,7 @@ fi
 # Zsh and oh-my-zsh configs
 #-------------------------------------------------------------------
 # A kind reminder for others using my dotfiles
-SRC_USERS=(jeff jeffjma)
+SRC_USERS=(jeff jeffjma inf-jeffjma jeffma)
 if [[ ! "${SRC_USERS[*]}" =~ "$USER" ]]; then
   # Username is not Jeff's
   if [[ "$(git config --global --get user.name)" = "Jeff Ma" ]]; then
@@ -181,7 +181,9 @@ alias icat='kitten icat'
 alias gcm='git commit -m'
 
 # dotfile management
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+# Double quotes (not single) so $HOME expands here; the git completer then sees a
+# real --git-dir when zsh expands the alias, making tab-completion repo-aware.
+alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 
 # nvim
 alias nconf="nvim $HOME/.config/nvim/init.lua"
