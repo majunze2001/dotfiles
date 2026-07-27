@@ -9,6 +9,7 @@
 !.local
 !.local/bin
 !.local/bin/yolo
+!.claude/
 !.claude/CLAUDE.md
 !.claude/statusline-command.sh
 

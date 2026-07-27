@@ -77,4 +77,4 @@ keybind = ctrl+shift+e=scroll_page_lines:1
 keybind = ctrl+shift+y=scroll_page_lines:-1
 keybind = ctrl+shift+d=scroll_page_fractional:0.5
 keybind = ctrl+shift+u=scroll_page_fractional:-0.5
-
+clipboard-paste-protection = false
