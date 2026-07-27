@@ -15,7 +15,9 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
   installing "Oh-my-zsh"
   export RUNZSH=no
   export KEEP_ZSHRC=yes
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  # The installer always prompts "change default shell to zsh? [Y/n]" (no env var
+  # for it), so feed it a Y. Any chsh/sudo password prompt still uses the terminal.
+  printf 'Y\n' | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   source ~/.zshrc
 else
   pprint "Oh-my-zsh is already installed. Skipping."
