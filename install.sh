@@ -25,12 +25,15 @@ if ! command -v zsh >/dev/null 2>&1; then
   fi
 fi
 
-# Clone the bare repo
+# Clone the bare repo (HTTPS works anonymously on a fresh machine without SSH keys)
 if [ -n "$SSH" ]; then
   git clone --bare git@github.com:majunze2001/dotfiles $HOME/.dotfiles
 else
   git clone --bare https://github.com/majunze2001/dotfiles.git $HOME/.dotfiles
 fi
+
+# Switch the remote to SSH so future push/pull are authenticated over SSH
+git --git-dir=$HOME/.dotfiles/ remote set-url origin git@github.com:majunze2001/dotfiles.git
 
 # We use $HOME as working tree so we can use the dotfiles directly
 git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME checkout unified
