@@ -35,6 +35,12 @@ fi
 # Switch the remote to SSH so future push/pull are authenticated over SSH
 git --git-dir=$HOME/.dotfiles/ remote set-url origin git@github.com:majunze2001/dotfiles.git
 
+# Make the repo non-bare with $HOME as its work tree, so git resolves the work
+# tree from config alone (no --work-tree flag needed by completion/tools/scripts).
+# core.bare must be false first, or git rejects core.worktree.
+git --git-dir=$HOME/.dotfiles/ config core.bare false
+git --git-dir=$HOME/.dotfiles/ config core.worktree "$HOME"
+
 # We use $HOME as working tree so we can use the dotfiles directly
 git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME checkout unified
 
