@@ -1,0 +1,10 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "vllm-dev",
+  "version": "0.1.0",
+  "description": "vLLM dev workflows",
+  "author": {
+    "name": "Jeff Ma",
+    "email": "jeffjma@umich.edu"
+  }
+}
