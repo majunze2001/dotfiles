@@ -14,3 +14,8 @@ Then followed by the clear code path on how this assumption or invariant is viol
 Fixing the code means first root causing the bug, and then proposing a minimal fix to the root cause. This assumes the root cause is true.
 For example, if a given setup is crashing but changing the setup parameter would make it work, changing that parameter is not a fix.
 Meanwhile, adjusting the code to hardcode the adjustment of this parameter in the buggy setup is also not a fix.
+
+# Conventions
+- When writing shell scripts, do not use `exec`
+- When running python scripts, use `-u` parameter
+- When providing commands for the user to run, always output zsh syntax
