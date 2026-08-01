@@ -19,3 +19,7 @@ Meanwhile, adjusting the code to hardcode the adjustment of this parameter in th
 - When writing shell scripts, do not use `exec`
 - When running python scripts, use `-u` parameter
 - When providing commands for the user to run, always output zsh syntax
+
+# Rules
+When you try to read something, or find something: instead of using grep solely, you must directly read the files fully, or tail the last few hundreds of lines, or dispatch to subagents to find. Grep is unreliable because you might miss some files due to wrong directories, wrong names, etc.
+When you run vLLM or related pipelines, you **must** monitor workers logs instead of benchmark driver logs.

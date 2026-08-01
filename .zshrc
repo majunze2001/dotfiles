@@ -203,6 +203,42 @@ function waitpid() {
   tail --pid $1 -f /dev/null
 }
 
+# macOS-style pbcopy for remote Linux boxes, via the OSC 52 escape sequence:
+# the terminal emulator on *my laptop* is the one that writes the clipboard, so
+# this works through ssh, tmux, srun, and containers with nothing installed.
+#   readlink -f foo | pbcopy      pbcopy < foo      pbcopy foo.txt
+# Only defined when there is no real pbcopy, so the same dotfile works on macOS.
+# NOTE: trailing newlines are stripped (pasting a path shouldn't hit <CR>), and
+# NUL bytes don't survive $(...) — this is for text, not binaries.
+if ! (( $+commands[pbcopy] )); then
+  function pbcopy() {
+    # Must actually open it: /dev/tty has rw bits even with no controlling
+    # terminal, so a `-w` test passes and the redirect below then fails.
+    if ! (: > /dev/tty) 2>/dev/null; then
+      print -u2 "pbcopy: no tty to write the OSC 52 sequence to"
+      return 1
+    fi
+
+    local data b64 seq
+    data=$(cat -- "$@") || return
+    b64=$(print -rn -- "$data" | base64 | tr -d '\n')
+    if (( ${#b64} > 100000 )); then
+      print -u2 "pbcopy: ${#b64} base64 bytes may exceed the terminal's OSC 52 limit"
+    fi
+
+    seq=$'\e]52;c;'"$b64"$'\a'
+    if [[ -n "$TMUX" ]]; then
+      # tmux swallows OSC 52 from applications under the default
+      # set-clipboard=external, so smuggle it out in a DCS passthrough with
+      # every inner ESC doubled. tmux >= 3.3 also needs `allow-passthrough on`.
+      seq=$'\ePtmux;'${seq//$'\e'/$'\e\e'}$'\e\\'
+    fi
+
+    # To the tty, not stdout, so pbcopy stays transparent inside a pipeline.
+    print -rn -- "$seq" > /dev/tty
+  }
+fi
+
 #-------------------------------------------------------------------
 # Environment variables
 #-------------------------------------------------------------------
