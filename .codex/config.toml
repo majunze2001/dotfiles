@@ -1,0 +1,2 @@
+[tui.keymap.global]
+clear_terminal = "ctrl-4"
