@@ -9,3 +9,5 @@ curl -sS https://webi.sh/gh | sh
 
 # install codex
 curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
+
+curl -fsSL https://code.kimi.com/kimi-code/install.sh | KIMI_INSTALL_DIR="$HOME/.local" bash
