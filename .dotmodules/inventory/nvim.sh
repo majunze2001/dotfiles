@@ -2,7 +2,7 @@
 
 set -ev
 
-VERSION=${VERSION:-v0.10.4}
+VERSION=${VERSION:-v0.11.0}
 
 unamestr="$(uname)"
 archstr="$(uname -m)"

@@ -240,7 +240,7 @@ vim.api.nvim_create_autocmd("VimResized", {
 vim.api.nvim_create_autocmd("TextYankPost", {
   pattern = "*",
   callback = function()
-    require('vim.highlight').on_yank({ higroup = 'Substitute', timeout = 300 })
+    vim.hl.on_yank({ higroup = 'Substitute', timeout = 300 })
   end
 })
 
@@ -571,7 +571,7 @@ require("lazy").setup({
           },
         })
 
-        vim.g.lualine_theme = "catppuccin"
+        vim.g.lualine_theme = "catppuccin-mocha"
 
         vim.cmd([[
         colorscheme catppuccin-mocha
@@ -1024,19 +1024,19 @@ require("lazy").setup({
         vim.keymap.set('n', 'gp', vim.diagnostic.goto_prev, { silent = true })
         vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, { silent = true })
 
-        local lspconfig = require'lspconfig'
         local capabilities = require'cmp_nvim_lsp'.default_capabilities()
 
         if vim.fn.executable('clangd') == 1 then
-          lspconfig.clangd.setup{
+          vim.lsp.config('clangd', {
             on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
-          }
+          })
+          vim.lsp.enable('clangd')
           -- vim.cmd('autocmd FileType c,cpp setlocal omnifunc=v:lua.vim.lsp.omnifunc')
         end
 
         if vim.fn.executable('pyright') == 1 then
-          lspconfig.pyright.setup{
+          vim.lsp.config('pyright', {
             on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
             cmd = { "pyright-langserver", "--stdio", "--max-old-space-size=40960" },
@@ -1050,7 +1050,8 @@ require("lazy").setup({
                 }
               }
             }
-          }
+          })
+          vim.lsp.enable('pyright')
           -- vim.cmd('autocmd FileType python setlocal omnifunc=v:lua.vim.lsp.omnifunc')
         end
 
@@ -1062,15 +1063,16 @@ require("lazy").setup({
               path = vim.fn.expand("~") .. "/.local/share/ltex",
             }
           end
-          lspconfig.ltex.setup{
+          vim.lsp.config('ltex', {
             on_attach = ltex_on_attach,
             capabilities = capabilities,
             filetypes = { "bib", "gitcommit", "markdown", "plaintex", "rst", "tex", "text" },
-          }
+          })
+          vim.lsp.enable('ltex')
         end
 
         if vim.fn.executable('texlab') == 1 then
-          lspconfig.texlab.setup{
+          vim.lsp.config('texlab', {
             on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
             settings = {
@@ -1081,21 +1083,24 @@ require("lazy").setup({
                 },
               },
             },
-          }
+          })
+          vim.lsp.enable('texlab')
         end
 
         if vim.fn.executable('gopls') == 1 then
-          lspconfig.gopls.setup{
+          vim.lsp.config('gopls', {
             on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
-          }
+          })
+          vim.lsp.enable('gopls')
         end
 
         if vim.fn.executable('zls') == 1 then
-          lspconfig.zls.setup{
+          vim.lsp.config('zls', {
             on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
-          }
+          })
+          vim.lsp.enable('zls')
         end
         -- Remove when Neovim > 0.10.0 is released as
         -- https://github.com/neovim/neovim/pull/28904 was merged.
@@ -1103,16 +1108,12 @@ require("lazy").setup({
         -- vim.g.zig_fmt_autosave = 0
 
         -- Configs for diagnostics
-        vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-          vim.lsp.diagnostic.on_publish_diagnostics, {
-            -- Virtual text appearance
-            virtual_text = {
-              spacing = 4,
-            },
-            -- Do not update in insert mode
-            update_in_insert = true,
-          }
-        )
+        vim.diagnostic.config({
+          virtual_text = {
+            spacing = 4,
+          },
+          update_in_insert = true,
+        })
 
         -- XXX: Seems unnecessary. Try removing together with omnifunc.
         -- vim.opt.completeopt = { "menuone", "noinsert", "noselect" }
@@ -1274,5 +1275,3 @@ require("lazy").setup({
 ------------------------------------------------------------------------------
 -- Setup after lazy.nvim
 ------------------------------------------------------------------------------
--- LSP loading becomes lazy, so this has to be called manually.
-vim.cmd.LspStart()
