@@ -332,3 +332,6 @@ queue() {
 
 export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 export CLAUDE_CODE_DISABLE_MOUSE=1
+
+# Back up the home directory
+alias sync-home='rsync -av --progress --exclude="/.cache/" --exclude="/.rustup/"'
