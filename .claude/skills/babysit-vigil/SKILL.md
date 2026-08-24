@@ -21,3 +21,4 @@ For perf runs (vllm-bench, aiperf, etc):
     - TPGS: total token per second per GPU, including both input tokens and output tokens.
     - Interactivity: defined by 1000 divided by percentile TPOT (time per output token) in ms,  P90 interactivity = 1000 / P90 TPOT in ms.
 7. You may only ask questions before launching the initial run, during retry, no questions asked and use your best judgment.
+8. Do not use `CronCreate` for any monitoring job
