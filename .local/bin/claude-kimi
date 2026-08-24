@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Run Claude Code 2.1.138 against a remote Claude Code Router instance.
+# Requires CCR_KEY and CCR_URL in the environment.
+set -euo pipefail
+
+CLAUDE_VERSION="2.1.138"
+CLAUDE_HOME="$HOME/services/claude-code-$CLAUDE_VERSION"
+CLAUDE_BIN="$CLAUDE_HOME/node_modules/.bin/claude"
+MODEL="kimi-k3[1m]"
+
+if [[ -z "${CCR_KEY:-}" ]]; then
+  echo "CCR_KEY environment variable is required" >&2
+  exit 1
+fi
+
+if [[ -z "${CCR_URL:-}" ]]; then
+  echo "CCR_URL environment variable is required" >&2
+  exit 1
+fi
+
+# Default bare hosts (e.g. "api.example.com") to https.
+case "$CCR_URL" in
+  http://*|https://*) ;;
+  *) CCR_URL="https://$CCR_URL" ;;
+esac
+
+if [[ ! -x "$CLAUDE_BIN" ]]; then
+  echo "Setting up Claude Code $CLAUDE_VERSION in $CLAUDE_HOME ..."
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm is required to set up Claude Code but was not found in PATH" >&2
+    exit 1
+  fi
+  mkdir -p "$CLAUDE_HOME"
+  cat > "$CLAUDE_HOME/package.json" <<EOF
+{
+  "dependencies": {
+    "@anthropic-ai/claude-code": "$CLAUDE_VERSION"
+  }
+}
+EOF
+  (cd "$CLAUDE_HOME" && npm install --no-audit --no-fund --loglevel=error)
+fi
+
+if [[ ! -x "$CLAUDE_BIN" ]]; then
+  echo "Pinned Claude Code executable not found after install: $CLAUDE_BIN" >&2
+  exit 1
+fi
+
+export ANTHROPIC_BASE_URL="$CCR_URL"
+export ANTHROPIC_AUTH_TOKEN="$CCR_KEY"
+export ANTHROPIC_MODEL="$MODEL"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="$MODEL"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="$MODEL"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="$MODEL"
+export CLAUDE_CODE_SUBAGENT_MODEL="$MODEL"
+export CLAUDE_CODE_MAX_CONTEXT_TOKENS=1048576
+export API_TIMEOUT_MS=600000
+export DISABLE_TELEMETRY=true
+export DISABLE_COST_WARNINGS=true
+export DISABLE_AUTOUPDATER=1
+
+"$CLAUDE_BIN" --dangerously-skip-permissions "$@"

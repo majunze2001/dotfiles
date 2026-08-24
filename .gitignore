@@ -9,6 +9,7 @@
 !.local
 !.local/bin
 !.local/bin/yolo
+!.local/bin/claude-kimi
 !.claude/
 !.claude/CLAUDE.md
 !.claude/settings.json
