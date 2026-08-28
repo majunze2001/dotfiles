@@ -52,6 +52,9 @@ source $ZSH/oh-my-zsh.sh
 # Language environment
 export LANG=en_US.UTF-8
 
+# Advertise truecolor support; SSH does not forward COLORTERM from the client
+export COLORTERM=truecolor
+
 # Shell options
 setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format.
 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
