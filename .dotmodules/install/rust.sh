@@ -21,17 +21,17 @@ fi
 
 if ! command -v rg >/dev/null 2>&1; then
   installing "ripgrep"
-  cargo install ripgrep
+  cargo install ripgrep --locked
 else
   pprint "ripgrep is already installed. Skipping."
 fi
 
 if ! command -v fd >/dev/null 2>&1; then
   installing "fd"
-  cargo install fd-find
+  cargo install fd-find --locked
 else
   pprint "fd is already installed. Skipping."
 fi
 
 installing "eza"
-cargo install eza
+cargo install eza --locked
