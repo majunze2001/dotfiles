@@ -708,6 +708,13 @@ require("lazy").setup({
           vim.keymap.set('n', 'S',     api.tree.search_node,                  opts('Search'))
           vim.keymap.set('n', 'U',     api.tree.toggle_custom_filter,         opts('Toggle Hidden'))
           vim.keymap.set('n', 'W',     api.tree.collapse_all,                 opts('Collapse'))
+          vim.keymap.set('n', 'z', function()
+            local winnr = require('nvim-tree.view').get_winnr()
+            if not winnr then return end
+            local narrow = 30
+            local cur = vim.api.nvim_win_get_width(winnr)
+            api.tree.resize({ width = cur > narrow and narrow or math.floor(vim.o.columns / 2) })
+          end, opts('Toggle Width'))
           vim.keymap.set('n', 'x',     api.fs.cut,                            opts('Cut'))
           vim.keymap.set('n', 'y',     api.fs.copy.filename,                  opts('Copy Name'))
           vim.keymap.set('n', 'Y',     api.fs.copy.relative_path,             opts('Copy Relative Path'))
