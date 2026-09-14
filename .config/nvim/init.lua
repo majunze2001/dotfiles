@@ -792,7 +792,7 @@ require("lazy").setup({
         vim.api.nvim_create_autocmd("WinClosed", {
           callback = function ()
             local winnr = tonumber(vim.fn.expand("<amatch>"))
-            vim.schedule_wrap(tab_win_closed(winnr))
+            vim.schedule(function() tab_win_closed(winnr) end)
           end,
           nested = true
         })
