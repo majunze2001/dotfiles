@@ -25,10 +25,11 @@ fi
 tar xzf nvim-$OS.tar.gz
 mkdir -p ~/.local
 
-# Remove
-rm -f ~/.local/bin/nvim    || true
-rm -rf ~/.local/lib/nvim   || true
-rm -rf ~/.local/share/nvim || true
+# Remove the previous install. Only share/nvim/runtime comes from the tarball; the rest of
+# share/nvim is stdpath('data') (lazy plugins, treesitter parsers, undodir) and must survive.
+rm -f ~/.local/bin/nvim             || true
+rm -rf ~/.local/lib/nvim            || true
+rm -rf ~/.local/share/nvim/runtime  || true
 
 # Install nvim
 rsync -a nvim-$OS/* ~/.local/
