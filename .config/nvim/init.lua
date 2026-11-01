@@ -275,10 +275,6 @@ vim.api.nvim_create_autocmd("FileType", {
 -- LaTeX
 vim.g.tex_flavor = "latex"
 
---- Lua filetypes
-vim.g.do_filetype_lua = 1
-vim.g.did_load_filetypes = 0
-
 ------------------------------------------------------------------------------
 -- Terminal settings
 -- These are to make the terminal inegration behaves like vim
