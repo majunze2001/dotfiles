@@ -814,6 +814,13 @@ require("lazy").setup({
         "nvim-lua/plenary.nvim",
         "nvim-telescope/telescope-fzy-native.nvim",
       },
+      init = function()
+        -- Nvim 0.11+ defines grn/grr/gra/gri/grt/grx, which make the `gr` below wait
+        -- for 'timeoutlen'. Their actions are mapped elsewhere (<Leader>lr, ga, gi, ...).
+        for _, lhs in ipairs({ 'grn', 'grr', 'gra', 'gri', 'grt', 'grx' }) do
+          pcall(vim.keymap.del, 'n', lhs)
+        end
+      end,
       keys = {
         { '<Leader>f', ':Telescope find_files find_command=fd,.,-H,--ignore-file,.gitignore,--exclude,.git,--type,f<CR>', silent = true },
         { '<Leader>b', ':Telescope buffers<CR>', silent = true },
