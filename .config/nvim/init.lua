@@ -1023,8 +1023,8 @@ require("lazy").setup({
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { silent = true })
         vim.keymap.set('n', 'gD', vim.diagnostic.open_float, { silent = true })
-        vim.keymap.set('n', 'gn', vim.diagnostic.goto_next, { silent = true })
-        vim.keymap.set('n', 'gp', vim.diagnostic.goto_prev, { silent = true })
+        vim.keymap.set('n', 'gn', function() vim.diagnostic.jump({ count = 1, float = true }) end, { silent = true })
+        vim.keymap.set('n', 'gp', function() vim.diagnostic.jump({ count = -1, float = true }) end, { silent = true })
         vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, { silent = true })
 
         local capabilities = require'cmp_nvim_lsp'.default_capabilities()
