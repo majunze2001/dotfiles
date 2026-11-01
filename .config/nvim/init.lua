@@ -1102,6 +1102,28 @@ require("lazy").setup({
           })
           vim.lsp.enable('zls')
         end
+
+        if vim.fn.executable('rust-analyzer') == 1 then
+          vim.lsp.config('rust_analyzer', {
+            capabilities = capabilities,
+            -- Inlay hints, as rust-tools.nvim used to show (rendered inline by Neovim)
+            on_attach = function(_, bufnr)
+              vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+            end,
+            settings = {
+              ["rust-analyzer"] = {
+                completion = {
+                  addCallArgumentSnippets = true,
+                  addCallParenthesis = true,
+                },
+                diagnostics = {
+                  disabled = {"inactive-code"},
+                },
+              },
+            },
+          })
+          vim.lsp.enable('rust_analyzer')
+        end
         -- Remove when Neovim > 0.10.0 is released as
         -- https://github.com/neovim/neovim/pull/28904 was merged.
         -- vim.g.zig_fmt_parse_errors = 0
@@ -1118,39 +1140,6 @@ require("lazy").setup({
         -- XXX: Seems unnecessary. Try removing together with omnifunc.
         -- vim.opt.completeopt = { "menuone", "noinsert", "noselect" }
         -- vim.opt.shortmess:append("c")
-      end
-    },
-    {
-      "simrat39/rust-tools.nvim",
-      ft = "rust",
-      dependencies = {
-        'neovim/nvim-lspconfig',
-      },
-      config = function()
-        -- rust-analyzer is set up by rust-tools.nvim.
-        require'rust-tools'.setup {
-          tools = {
-            inlay_hints = {
-              show_parameter_hints = true,
-              other_hints_prefix = '  » ',
-            }
-          },
-          server = {
-            capabilities = require'cmp_nvim_lsp'.default_capabilities(),
-            settings = {
-              ["rust-analyzer"] = {
-                completion = {
-                  addCallArgumentSnippets = true,
-                  addCallParenthesis = true,
-                },
-                diagnostics = {
-                  disabled = {"inactive-code"},
-                },
-              },
-            },
-          },
-        }
-        -- vim.cmd('autocmd FileType rust setlocal omnifunc=v:lua.vim.lsp.omnifunc')
       end
     },
     {
