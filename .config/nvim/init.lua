@@ -1029,9 +1029,11 @@ require("lazy").setup({
 
         local capabilities = require'cmp_nvim_lsp'.default_capabilities()
 
+        -- vim-illuminate highlights references on its own (LSP, then treesitter, then regex).
+        -- Its legacy on_attach is not needed, and it calls the deprecated client.supports_method.
+
         if vim.fn.executable('clangd') == 1 then
           vim.lsp.config('clangd', {
-            on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
           })
           vim.lsp.enable('clangd')
@@ -1040,7 +1042,6 @@ require("lazy").setup({
 
         if vim.fn.executable('pyright') == 1 then
           vim.lsp.config('pyright', {
-            on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
             cmd = { "pyright-langserver", "--stdio", "--max-old-space-size=40960" },
             settings = {
@@ -1059,8 +1060,7 @@ require("lazy").setup({
         end
 
         if vim.fn.executable('ltex-ls') == 1 then
-          local ltex_on_attach = function(client, bufnr)
-            require'illuminate'.on_attach(client, bufnr)
+          local ltex_on_attach = function()
             require'ltex_extra'.setup{
               load_langs = { 'en-US' },
               path = vim.fn.expand("~") .. "/.local/share/ltex",
@@ -1076,7 +1076,6 @@ require("lazy").setup({
 
         if vim.fn.executable('texlab') == 1 then
           vim.lsp.config('texlab', {
-            on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
             settings = {
               texlab = {
@@ -1092,7 +1091,6 @@ require("lazy").setup({
 
         if vim.fn.executable('gopls') == 1 then
           vim.lsp.config('gopls', {
-            on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
           })
           vim.lsp.enable('gopls')
@@ -1100,7 +1098,6 @@ require("lazy").setup({
 
         if vim.fn.executable('zls') == 1 then
           vim.lsp.config('zls', {
-            on_attach = require'illuminate'.on_attach,
             capabilities = capabilities,
           })
           vim.lsp.enable('zls')
@@ -1140,7 +1137,6 @@ require("lazy").setup({
           },
           server = {
             capabilities = require'cmp_nvim_lsp'.default_capabilities(),
-            on_attach = require'illuminate'.on_attach,
             settings = {
               ["rust-analyzer"] = {
                 completion = {
