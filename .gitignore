@@ -2,8 +2,23 @@
 *
 
 # But track these specific folders
+# .config/: only the files listed here; everything else (gcloud creds, API keys) stays ignored
 !.config/
-!.config/**
+!.config/direnv/
+!.config/direnv/direnvrc
+!.config/eza/
+!.config/eza/theme.yml
+!.config/ghostty/
+!.config/ghostty/config
+!.config/kitty/
+!.config/kitty/kitty.conf
+!.config/kitty/current-theme.conf
+!.config/nvim/
+!.config/nvim/init.lua
+!.config/nvim/lazy-lock.json
+!.config/sioyek/
+!.config/sioyek/keys_user.config
+!.config/sioyek/prefs_user.config
 !.ssh/
 !.ssh/rc
 !.local
@@ -18,10 +33,6 @@
 !.claude/skills/**
 !.codex
 !.codex/config.toml
-
-
-# exclude the ones with api keys/authentication
-.config/github-copilot
 
 !.dotmodules/
 !.dotmodules/**
