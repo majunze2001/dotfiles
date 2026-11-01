@@ -333,7 +333,10 @@ queue() {
   local dep_pid=$1
   shift
 
-  print -r -- "$$"   # print this queue process PID
+  # PID of this process, which exec turns into the queued command. Not $$: in a
+  # backgrounded call (`queue ... &`) that is the parent shell's PID.
+  zmodload zsh/system
+  print -r -- "$sysparams[pid]"
 
   tail --pid="$dep_pid" -f /dev/null
   exec "$@"
