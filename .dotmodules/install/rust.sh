@@ -33,5 +33,13 @@ else
   pprint "fd is already installed. Skipping."
 fi
 
+# nvim-treesitter (main branch) builds parsers with the tree-sitter CLI (>= 0.26.1)
+if ! command -v tree-sitter >/dev/null 2>&1; then
+  installing "tree-sitter-cli"
+  cargo install tree-sitter-cli --locked
+else
+  pprint "tree-sitter-cli is already installed. Skipping."
+fi
+
 installing "eza"
 cargo install eza --locked
