@@ -424,6 +424,15 @@ require("lazy").setup({
     { "tpope/vim-repeat" },
     {"tpope/vim-surround"},
     {
+      dir = "~/workspace/nvim-etc",
+      name = "explain.nvim",
+      config = function()
+        require("explain").setup({ keymap = false })
+        vim.keymap.set('x', '<leader>e', ':Explain<CR>', { silent = true, desc = 'Explain selection' })
+        vim.keymap.set('n', '<leader>en', '<Cmd>ExplainNewSession<CR>', { desc = 'Explain: new session' })
+      end,
+    },
+    {
       "foosoft/vim-argwrap",
       init = function()
         vim.g.argwrap_tail_comma = 1
@@ -745,11 +754,13 @@ require("lazy").setup({
 
         -- Close all nvim-tree windows when it's closed.
         -- Also, while ignoring fidget.nvim windows, if the last code window was closed, quit Neovim.
-        local function tab_win_closed(winnr)
+        local function tab_win_closed(winnr, tabnr, bufnr)
           local api = require"nvim-tree.api"
-          local tabnr = vim.api.nvim_win_get_tabpage(winnr)
-          local bufnr = vim.api.nvim_win_get_buf(winnr)
           local buf_info = vim.fn.getbufinfo(bufnr)[1]
+          -- Tabpage may be gone too (e.g. closed window was the last in its tab)
+          if not buf_info or not vim.api.nvim_tabpage_is_valid(tabnr) then
+            return
+          end
           local all_tab_wins = vim.api.nvim_tabpage_list_wins(tabnr)
           local remaining_wins = vim.tbl_filter(function(w) return w ~= winnr end, all_tab_wins)
           local remaining_bufs = vim.tbl_map(vim.api.nvim_win_get_buf, remaining_wins)
@@ -788,7 +799,10 @@ require("lazy").setup({
         vim.api.nvim_create_autocmd("WinClosed", {
           callback = function ()
             local winnr = tonumber(vim.fn.expand("<amatch>"))
-            vim.schedule(function() tab_win_closed(winnr) end)
+            -- Query the closing window now: its id is invalid once the close completes
+            local tabnr = vim.api.nvim_win_get_tabpage(winnr)
+            local bufnr = vim.api.nvim_win_get_buf(winnr)
+            vim.schedule(function() tab_win_closed(winnr, tabnr, bufnr) end)
           end,
           nested = true
         })
@@ -1187,18 +1201,18 @@ require("lazy").setup({
     },
     -- Syntactic language support
     {
+      -- The frozen `master` branch does not support Neovim 0.12: its custom query
+      -- directives (e.g. markdown's #set-lang-from-info-string!) expect a single
+      -- TSNode per capture, but 0.12 always passes TSNode[], which crashes the
+      -- highlighter on fenced code blocks. `main` requires tree-sitter-cli.
       "nvim-treesitter/nvim-treesitter",
-      branch = "master",
+      branch = "main",
+      lazy = false,
       build = ':TSUpdate',
       config = function()
-        require'nvim-treesitter.configs'.setup {
-          ensure_installed = { "c", "cpp", "python", "rust", "go", "vim", "vimdoc", "lua", "zig", "markdown", "markdown_inline" },
-          highlight = {
-            enable = true,
-          },
-        }
-        vim.api.nvim_create_autocmd("BufEnter", {
-          pattern = { "*.c", "*.h", "*.cpp", "*.hpp", "*.py", "*.rs", "*.go", "*.vim", "*.lua", "*.zig", "*.md" },
+        require'nvim-treesitter'.install { "c", "cpp", "python", "rust", "go", "vim", "vimdoc", "lua", "zig", "markdown", "markdown_inline" }
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = { "c", "cpp", "python", "rust", "go", "vim", "help", "lua", "zig", "markdown" },
           callback = function(args)
             pcall(vim.treesitter.start, args.buf)
           end,
