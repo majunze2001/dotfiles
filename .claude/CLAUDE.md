@@ -6,6 +6,10 @@ gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-1
 ```
 This returns JSON with all inline review comments (diff_hunk, body, path, line, user, etc.). Prefer this over `gh pr view` for reading code review feedback.
 
+# Tickr
+Tickr is my personal TODO tracker. It is an MCP server, not a CLI, and its tools are `mcp__tickr__*` (`list_tasks`, `get_task`, `get_task_history`, `create_task`, `update_task`). They may be deferred, so check with `ToolSearch` before deciding they are missing. When I mention a TODO or tickr item, look there. The server's own instructions cover how to use the tools.
+If the tools are not loaded, ignore tickr and continue the task: do not look for a CLI, call the server by hand, or troubleshoot the connection unless I ask. If I asked for a tickr action, say that it was skipped.
+
 # What "root cause a bug" means
 "Root cause" a bug means finding definite proof of the bug, demonstrated through clear logs. The log must show clear proof of assumptions or invariants being violated.
 Then followed by the clear code path on how this assumption or invariant is violated. A plus is to create a deterministic minimal reproduction case of the bug. For example, when debugging IMA, finding the kernel that caused the IMA is not root causing because it does not show which code path triggered this IMA. Instead, the root cause could be a read after write or invalid memory allocation in the caller side.

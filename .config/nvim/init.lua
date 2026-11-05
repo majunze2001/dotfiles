@@ -424,15 +424,6 @@ require("lazy").setup({
     { "tpope/vim-repeat" },
     {"tpope/vim-surround"},
     {
-      dir = "~/workspace/nvim-etc",
-      name = "explain.nvim",
-      config = function()
-        require("explain").setup({ keymap = false })
-        vim.keymap.set('x', '<leader>e', ':Explain<CR>', { silent = true, desc = 'Explain selection' })
-        vim.keymap.set('n', '<leader>en', '<Cmd>ExplainNewSession<CR>', { desc = 'Explain: new session' })
-      end,
-    },
-    {
       "foosoft/vim-argwrap",
       init = function()
         vim.g.argwrap_tail_comma = 1
