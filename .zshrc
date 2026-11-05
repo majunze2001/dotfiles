@@ -345,5 +345,9 @@ queue() {
 export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 export CLAUDE_CODE_DISABLE_MOUSE=1
 
+# Claude Code questions: `online` lets sessions on this machine ask, `offline` rejects them
+alias online='touch ~/.claude/user_online'
+alias offline='rm -f ~/.claude/user_online'
+
 # Back up the home directory
 alias sync-home='rsync -av --progress --exclude="/.cache/" --exclude="/.rustup/"'

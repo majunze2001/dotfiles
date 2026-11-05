@@ -29,6 +29,7 @@ Use the Term column verbatim and never the Avoid column. For a new concept, add 
 | all-gather | every rank ends with every shard | allgather |
 | all-reduce | every rank ends with the sum | allreduce |
 | all-to-all | rank i sends shard j to rank j | alltoall |
+| collective precision | the data type of tensors sent in a collective, such as BF16 or FP8 | wire |
 | reduce-scatter | rank j ends with the sum of shard j | |
 
 ## KV cache
@@ -44,3 +45,12 @@ Use the Term column verbatim and never the Avoid column. For a new concept, add 
 | Term | Meaning | Avoid |
 |---|---|---|
 | slice > host > chip > device | containment order; v7x has 2 devices per chip | |
+
+## Experiments
+| Term | Meaning | Avoid |
+|---|---|---|
+| case | one side of an A/B test, such as the run with a change on or the run with it off | arm |
+| optimization | a code change meant to reduce step time | lever |
+| remove each change in turn | test a stack of changes by running it once with each change removed | leave-one-out |
+| served layout, collective precision and draft | the parallelism, collective precision and draft model used in serving; name each one | served setup |
+| start, restart | begin a watcher, timer or queued run, or begin it again | arm, re-arm |

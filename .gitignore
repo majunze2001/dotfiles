@@ -45,4 +45,5 @@
 
 # Always track .gitignore itself
 !.gitignore
+!.gitignore_global
 .DS_Store

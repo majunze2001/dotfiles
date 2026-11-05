@@ -2,6 +2,21 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/question_hook.sh\"",
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
+  },
   "model": "opus",
   "disableAgentView": true,
   "statusLine": {
