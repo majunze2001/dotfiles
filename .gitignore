@@ -27,6 +27,7 @@
 !.local/bin/claude-kimi
 !.claude/
 !.claude/CLAUDE.md
+!.claude/terms.md
 !.claude/settings.json
 !.claude/statusline-command.sh
 !.claude/skills/
