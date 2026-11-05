@@ -23,3 +23,10 @@ Meanwhile, adjusting the code to hardcode the adjustment of this parameter in th
 # Rules
 When you try to read something, or find something: instead of using grep solely, you must directly read the files fully, or tail the last few hundreds of lines, or dispatch to subagents to find. Grep is unreliable because you might miss some files due to wrong directories, wrong names, etc.
 When you run vLLM or related pipelines, you **must** monitor workers logs instead of benchmark driver logs.
+Whenever you need to ask me a question, you **must** use the `AskUserQuestion` tool instead of typing the question in your response. Questions typed inline get buried under other output. This applies to every question, including minor ones and offers like "want me to do X?".
+
+# HTML pages and artifacts
+- Paragraphs use the full width of the page's content column; do not cap them with a `max-width` such as `65ch` or `74ch`.
+
+# Terms
+Follow the glossary in @~/.claude/terms.md: its terms verbatim, never its Avoid words. Add a row there for any new term instead of coining one.

@@ -1261,6 +1261,14 @@ require("lazy").setup({
         vim.keymap.set("n", "<C-w>z",  "<Plug>(zoom-toggle)", { silent = true })
       end
     },
+    {
+      "MeanderingProgrammer/render-markdown.nvim",
+      cmd = { "RenderMarkdown" },
+      opts = {
+        file_types = { "markdown" },
+        headings = { icon = false, position = 'inline' },
+      },
+    },
   },
   ui = { custom_keys = {}, },
   readme = { enabled = false },
