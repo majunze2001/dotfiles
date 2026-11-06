@@ -54,3 +54,8 @@ Use the Term column verbatim and never the Avoid column. For a new concept, add 
 | remove each change in turn | test a stack of changes by running it once with each change removed | leave-one-out |
 | served layout, collective precision and draft | the parallelism, collective precision and draft model used in serving; name each one | served setup |
 | start, restart | begin a watcher, timer or queued run, or begin it again | arm, re-arm |
+
+## Process
+| Term | Meaning | Avoid |
+|---|---|---|
+| send the commit to X | give X a commit to merge | handoff, hand off, hand over |
