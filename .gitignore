@@ -30,6 +30,8 @@
 !.claude/terms.md
 !.claude/settings.json
 !.claude/statusline-command.sh
+!.claude/hooks/
+!.claude/hooks/question_hook.sh
 !.claude/skills/
 !.claude/skills/**
 !.codex
