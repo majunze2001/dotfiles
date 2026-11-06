@@ -8,6 +8,7 @@ This returns JSON with all inline review comments (diff_hunk, body, path, line, 
 
 # Tickr
 Tickr is my personal TODO tracker. It is an MCP server, not a CLI, and its tools are `mcp__tickr__*` (`list_tasks`, `get_task`, `get_task_history`, `create_task`, `update_task`). They may be deferred, so check with `ToolSearch` before deciding they are missing. When I mention a TODO or tickr item, look there. The server's own instructions cover how to use the tools.
+For TODO item deferred through a claude session, add session_id and project path to notes.
 If the tools are not loaded, ignore tickr and continue the task: do not look for a CLI, call the server by hand, or troubleshoot the connection unless I ask. If I asked for a tickr action, say that it was skipped.
 
 # What "root cause a bug" means
